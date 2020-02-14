@@ -272,7 +272,7 @@ const LeftPanel = createReactClass({
             breadcrumbs = (<RoomBreadcrumbs collapsed={this.props.collapsed} />);
         }
 
-        return (
+        /*return (
             <div className={containerClasses}>
                 { tagPanelContainer }
                 <aside className="mx_LeftPanel dark-panel">
@@ -281,6 +281,26 @@ const LeftPanel = createReactClass({
                     <CallPreview ConferenceHandler={VectorConferenceHandler} />
                     <div className="mx_LeftPanel_exploreAndFilterRow" onKeyDown={this._onKeyDown} onFocus={this._onFocus} onBlur={this._onBlur}>
                         { exploreButton }
+                        { searchBox }
+                    </div>
+                    <RoomList
+                        onKeyDown={this._onKeyDown}
+                        onFocus={this._onFocus}
+                        onBlur={this._onBlur}
+                        ref={this.collectRoomList}
+                        resizeNotifier={this.props.resizeNotifier}
+                        collapsed={this.props.collapsed}
+                        searchFilter={this.state.searchFilter}
+                        ConferenceHandler={VectorConferenceHandler} />
+                </aside>
+            </div>
+        );*/
+
+        return (
+            <div className={containerClasses}>
+                <aside className="mx_LeftPanel dark-panel">
+                    <CallPreview ConferenceHandler={VectorConferenceHandler} />
+                    <div className="mx_LeftPanel_exploreAndFilterRow" onKeyDown={this._onKeyDown} onFocus={this._onFocus} onBlur={this._onBlur}>
                         { searchBox }
                     </div>
                     <RoomList

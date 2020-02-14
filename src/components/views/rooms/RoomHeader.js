@@ -302,12 +302,20 @@ export default createReactClass({
             />;
         }
 
-        const rightRow =
+        /*const rightRow =
             <div className="mx_RoomHeader_buttons">
                 { settingsButton }
                 { pinnedEventsButton }
                 { shareRoomButton }
                 { manageIntegsButton }
+                { forgetButton }
+                { searchButton }
+            </div>;*/
+            
+        const rightRow =
+            <div className="mx_RoomHeader_buttons">
+                { settingsButton }
+                { pinnedEventsButton }
                 { forgetButton }
                 { searchButton }
             </div>;

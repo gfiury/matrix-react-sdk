@@ -65,7 +65,7 @@ export default class RoomSettingsDialog extends React.Component {
             "mx_RoomSettingsDialog_securityIcon",
             <SecurityRoomSettingsTab roomId={this.props.roomId} />,
         ));
-        tabs.push(new Tab(
+        /*tabs.push(new Tab(
             _td("Roles & Permissions"),
             "mx_RoomSettingsDialog_rolesIcon",
             <RolesRoomSettingsTab roomId={this.props.roomId} />,
@@ -88,7 +88,7 @@ export default class RoomSettingsDialog extends React.Component {
             _td("Advanced"),
             "mx_RoomSettingsDialog_warningIcon",
             <AdvancedRoomSettingsTab roomId={this.props.roomId} closeSettingsFn={this.props.onFinished} />,
-        ));
+        ));*/
 
         return tabs;
     }
