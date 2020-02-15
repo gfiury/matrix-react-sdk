@@ -380,7 +380,12 @@ export default createReactClass({
 
         switch (myMembership) {
             case 'join':
-                return <div>
+                <div>
+                    { this._renderLeaveMenu(myMembership) }
+                    <hr className="mx_RoomTileContextMenu_separator" role="separator" />
+                    { this._renderSettingsMenu() }
+                </div>;
+                /*return <div>
                     { this._renderNotifMenu() }
                     <hr className="mx_RoomTileContextMenu_separator" role="separator" />
                     { this._renderLeaveMenu(myMembership) }
@@ -388,7 +393,7 @@ export default createReactClass({
                     { this._renderRoomTagMenu() }
                     <hr className="mx_RoomTileContextMenu_separator" role="separator" />
                     { this._renderSettingsMenu() }
-                </div>;
+                </div>;*/
             case 'invite':
                 return <div>
                     { this._renderLeaveMenu(myMembership) }

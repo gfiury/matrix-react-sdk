@@ -18,6 +18,14 @@ limitations under the License.
 /** The types of page which can be shown by the LoggedInView */
 export default {
     HomePage: "home_page",
+    AppointmentPage: "appointment_page",
+	ListAppointmentsPage: "list_appointments_page",
+	MedicSchedulePage: "schedule_page",
+	ManageSchedulePage: "manage_schedule_page",
+	EducationSchedulePage: "education_schedule_page",
+	ManageEducationPage: "manage_education_page",
+	UserCalendarPage: "user_calendar_page",
+	ProfilePage: "profile_page",
     RoomView: "room_view",
     RoomDirectory: "room_directory",
     UserView: "user_view",

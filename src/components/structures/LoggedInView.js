@@ -17,7 +17,7 @@ limitations under the License.
 */
 
 import { MatrixClient } from 'matrix-js-sdk';
-import React, {createRef} from 'react';
+import React, { createRef } from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import { DragDropContext } from 'react-beautiful-dnd';
@@ -29,7 +29,7 @@ import { fixupColorFonts } from '../../utils/FontManager';
 import * as sdk from '../../index';
 import dis from '../../dispatcher';
 import sessionStore from '../../stores/SessionStore';
-import {MatrixClientPeg} from '../../MatrixClientPeg';
+import { MatrixClientPeg } from '../../MatrixClientPeg';
 import SettingsStore from "../../settings/SettingsStore";
 import RoomListStore from "../../stores/RoomListStore";
 import { getHomePageUrl } from '../../utils/pages';
@@ -37,7 +37,7 @@ import { getHomePageUrl } from '../../utils/pages';
 import TagOrderActions from '../../actions/TagOrderActions';
 import RoomListActions from '../../actions/RoomListActions';
 import ResizeHandle from '../views/elements/ResizeHandle';
-import {Resizer, CollapseDistributor} from '../../resizer';
+import { Resizer, CollapseDistributor } from '../../resizer';
 import MatrixClientContext from "../../contexts/MatrixClientContext";
 // We need to fetch each pinned message individually (if we don't already have it)
 // so each pinned message may trigger a request. Limit the number per room for sanity.
@@ -78,7 +78,7 @@ const LoggedInView = createReactClass({
         // and lots and lots of other stuff.
     },
 
-    getInitialState: function() {
+    getInitialState: function () {
         return {
             // use compact timeline view
             useCompactLayout: SettingsStore.getValue('useCompactLayout'),
@@ -87,13 +87,13 @@ const LoggedInView = createReactClass({
         };
     },
 
-    componentDidMount: function() {
+    componentDidMount: function () {
         this.resizer = this._createResizer();
         this.resizer.attach();
         this._loadResizerPreferences();
     },
 
-    componentWillMount: function() {
+    componentWillMount: function () {
         // stash the MatrixClient in case we log out before we are unmounted
         this._matrixClient = this.props.matrixClient;
 
@@ -130,7 +130,7 @@ const LoggedInView = createReactClass({
         }
     },
 
-    componentWillUnmount: function() {
+    componentWillUnmount: function () {
         document.removeEventListener('keydown', this._onNativeKeyDown, false);
         this._matrixClient.removeListener("accountData", this.onAccountData);
         this._matrixClient.removeListener("sync", this.onSync);
@@ -147,11 +147,11 @@ const LoggedInView = createReactClass({
     // This is required because `LoggedInView` maintains its own state and if this state
     // updates after the client peg has been made null (during logout), then it will
     // attempt to re-render and the children will throw errors.
-    shouldComponentUpdate: function() {
+    shouldComponentUpdate: function () {
         return Boolean(MatrixClientPeg.get());
     },
 
-    canResetTimelineInRoom: function(roomId) {
+    canResetTimelineInRoom: function (roomId) {
         if (!this._roomView.current) {
             return true;
         }
@@ -174,10 +174,10 @@ const LoggedInView = createReactClass({
             toggleSize: 260 - 50,
             onCollapsed: (collapsed) => {
                 if (collapsed) {
-                    dis.dispatch({action: "hide_left_panel"}, true);
+                    dis.dispatch({ action: "hide_left_panel" }, true);
                     window.localStorage.setItem("mx_lhs_size", '0');
                 } else {
-                    dis.dispatch({action: "show_left_panel"}, true);
+                    dis.dispatch({ action: "show_left_panel" }, true);
                 }
             },
             onResized: (size) => {
@@ -203,18 +203,18 @@ const LoggedInView = createReactClass({
         this.resizer.forHandleAt(0).resize(lhsSize);
     },
 
-    onAccountData: function(event) {
+    onAccountData: function (event) {
         if (event.getType() === "im.vector.web.settings") {
             this.setState({
                 useCompactLayout: event.getContent().useCompactLayout,
             });
         }
         if (event.getType() === "m.ignored_user_list") {
-            dis.dispatch({action: "ignore_state_changed"});
+            dis.dispatch({ action: "ignore_state_changed" });
         }
     },
 
-    onSync: function(syncState, oldSyncState, data) {
+    onSync: function (syncState, oldSyncState, data) {
         const oldErrCode = (
             this.state.syncErrorData &&
             this.state.syncErrorData.error &&
@@ -238,14 +238,14 @@ const LoggedInView = createReactClass({
         }
     },
 
-    onRoomStateEvents: function(ev, state) {
+    onRoomStateEvents: function (ev, state) {
         const roomLists = RoomListStore.getRoomLists();
         if (roomLists['m.server_notice'] && roomLists['m.server_notice'].some(r => r.roomId === ev.getRoomId())) {
             this._updateServerNoticeEvents();
         }
     },
 
-    _updateServerNoticeEvents: async function() {
+    _updateServerNoticeEvents: async function () {
         const roomLists = RoomListStore.getRoomLists();
         if (!roomLists['m.server_notice']) return [];
 
@@ -267,7 +267,7 @@ const LoggedInView = createReactClass({
         });
     },
 
-    _onPaste: function(ev) {
+    _onPaste: function (ev) {
         let canReceiveInput = false;
         let element = ev.target;
         // test for all parents because the target can be a child of a contenteditable element
@@ -279,7 +279,7 @@ const LoggedInView = createReactClass({
             // refocusing during a paste event will make the
             // paste end up in the newly focused element,
             // so dispatch synchronously before paste happens
-            dis.dispatch({action: 'focus_composer'}, true);
+            dis.dispatch({ action: 'focus_composer' }, true);
         }
     },
 
@@ -305,13 +305,13 @@ const LoggedInView = createReactClass({
     We also listen with a native listener on the document to get keydown events when no element is focused.
     Bubbling is irrelevant here as the target is the body element.
     */
-    _onReactKeyDown: function(ev) {
+    _onReactKeyDown: function (ev) {
         // events caught while bubbling up on the root element
         // of this component, so something must be focused.
         this._onKeyDown(ev);
     },
 
-    _onNativeKeyDown: function(ev) {
+    _onNativeKeyDown: function (ev) {
         // only pass this if there is no focused element.
         // if there is, _onKeyDown will be called by the
         // react keydown handler that respects the react bubbling order.
@@ -320,20 +320,20 @@ const LoggedInView = createReactClass({
         }
     },
 
-    _onKeyDown: function(ev) {
-            /*
-            // Remove this for now as ctrl+alt = alt-gr so this breaks keyboards which rely on alt-gr for numbers
-            // Will need to find a better meta key if anyone actually cares about using this.
-            if (ev.altKey && ev.ctrlKey && ev.keyCode > 48 && ev.keyCode < 58) {
-                dis.dispatch({
-                    action: 'view_indexed_room',
-                    roomIndex: ev.keyCode - 49,
-                });
-                ev.stopPropagation();
-                ev.preventDefault();
-                return;
-            }
-            */
+    _onKeyDown: function (ev) {
+        /*
+        // Remove this for now as ctrl+alt = alt-gr so this breaks keyboards which rely on alt-gr for numbers
+        // Will need to find a better meta key if anyone actually cares about using this.
+        if (ev.altKey && ev.ctrlKey && ev.keyCode > 48 && ev.keyCode < 58) {
+            dis.dispatch({
+                action: 'view_indexed_room',
+                roomIndex: ev.keyCode - 49,
+            });
+            ev.stopPropagation();
+            ev.preventDefault();
+            return;
+        }
+        */
 
         let handled = false;
         const ctrlCmdOnly = isOnlyCtrlOrCmdKeyEvent(ev);
@@ -395,7 +395,7 @@ const LoggedInView = createReactClass({
 
             if (!isClickShortcut && ev.key !== Key.TAB && !canElementReceiveInput(ev.target)) {
                 // synchronous dispatch so we focus before key generates input
-                dis.dispatch({action: 'focus_composer'}, true);
+                dis.dispatch({ action: 'focus_composer' }, true);
                 ev.stopPropagation();
                 // we should *not* preventDefault() here as
                 // that would prevent typing in the now-focussed composer
@@ -407,13 +407,13 @@ const LoggedInView = createReactClass({
      * dispatch a page-up/page-down/etc to the appropriate component
      * @param {Object} ev The key event
      */
-    _onScrollKeyPressed: function(ev) {
+    _onScrollKeyPressed: function (ev) {
         if (this._roomView.current) {
             this._roomView.current.handleScrollKey(ev);
         }
     },
 
-    _onDragEnd: function(result) {
+    _onDragEnd: function (result) {
         // Dragged to an invalid destination, not onto a droppable
         if (!result.destination) {
             return;
@@ -438,7 +438,7 @@ const LoggedInView = createReactClass({
         }
     },
 
-    _onRoomTileEndDrag: function(result) {
+    _onRoomTileEndDrag: function (result) {
         let newTag = result.destination.droppableId.split('_')[1];
         let prevTag = result.source.droppableId.split('_')[1];
         if (newTag === 'undefined') newTag = undefined;
@@ -457,7 +457,7 @@ const LoggedInView = createReactClass({
         ), true);
     },
 
-    _onMouseDown: function(ev) {
+    _onMouseDown: function (ev) {
         // When the panels are disabled, clicking on them results in a mouse event
         // which bubbles to certain elements in the tree. When this happens, close
         // any settings page that is currently open (user/room/group).
@@ -478,7 +478,7 @@ const LoggedInView = createReactClass({
         }
     },
 
-    _onMouseUp: function(ev) {
+    _onMouseUp: function (ev) {
         if (!this.state.mouseDown) return;
 
         const deltaX = ev.pageX - this.state.mouseDown.x;
@@ -496,14 +496,14 @@ const LoggedInView = createReactClass({
 
         // Always clear the mouseDown state to ensure we don't accidentally
         // use stale values due to the mouseDown checks.
-        this.setState({mouseDown: null});
+        this.setState({ mouseDown: null });
     },
 
     _setResizeContainerRef(div) {
         this.resizeContainer = div;
     },
 
-    render: function() {
+    render: function () {
         const LeftPanel = sdk.getComponent('structures.LeftPanel');
         const RoomView = sdk.getComponent('structures.RoomView');
         const UserView = sdk.getComponent('structures.UserView');
@@ -518,23 +518,34 @@ const LoggedInView = createReactClass({
         const PasswordNagBar = sdk.getComponent('globals.PasswordNagBar');
         const ServerLimitBar = sdk.getComponent('globals.ServerLimitBar');
 
+        const HomePageEleia = sdk.getComponent('eleia.HomePageEleia');
+        const NavBarMin = sdk.getComponent('eleia.NavBarMin');
+        const AppointmentPageEleia = sdk.getComponent('eleia.AppointmentPage');
+        const ListAppointmentPageEleia = sdk.getComponent('eleia.ListAppointmentPage');
+        const MedicEventPageEleia = sdk.getComponent('eleia.MedicEventPage');
+        const EducationPageEleia = sdk.getComponent('eleia.education.EducationEventPage');
+        const ManageEducationPageEleia = sdk.getComponent('eleia.education.ManageEducationPage');
+        const ManageMedicEventPageEleia = sdk.getComponent('eleia.ManageMedicEventPage');
+        const UserCalendarPageEleia = sdk.getComponent('eleia.UserCalendarPage');
+        const ProfilePageEleia = sdk.getComponent('eleia.ProfilePage');
+
         let pageElement;
 
         switch (this.props.page_type) {
             case PageTypes.RoomView:
                 pageElement = <RoomView
-                        ref={this._roomView}
-                        autoJoin={this.props.autoJoin}
-                        onRegistered={this.props.onRegistered}
-                        thirdPartyInvite={this.props.thirdPartyInvite}
-                        oobData={this.props.roomOobData}
-                        viaServers={this.props.viaServers}
-                        eventPixelOffset={this.props.initialEventPixelOffset}
-                        key={this.props.currentRoomId || 'roomview'}
-                        disabled={this.props.middleDisabled}
-                        ConferenceHandler={this.props.ConferenceHandler}
-                        resizeNotifier={this.props.resizeNotifier}
-                    />;
+                    ref={this._roomView}
+                    autoJoin={this.props.autoJoin}
+                    onRegistered={this.props.onRegistered}
+                    thirdPartyInvite={this.props.thirdPartyInvite}
+                    oobData={this.props.roomOobData}
+                    viaServers={this.props.viaServers}
+                    eventPixelOffset={this.props.initialEventPixelOffset}
+                    key={this.props.currentRoomId || 'roomview'}
+                    disabled={this.props.middleDisabled}
+                    ConferenceHandler={this.props.ConferenceHandler}
+                    resizeNotifier={this.props.resizeNotifier}
+                />;
                 break;
 
             case PageTypes.MyGroups:
@@ -559,10 +570,43 @@ const LoggedInView = createReactClass({
                 pageElement = <UserView userId={this.props.currentUserId} />;
                 break;
             case PageTypes.GroupView:
-                pageElement = <GroupView
+                /*pageElement = <GroupView
                     groupId={this.props.currentGroupId}
                     isNew={this.props.currentGroupIsNew}
-                />;
+                />;*/
+                pageElement = <HomePageEleia />
+
+            case PageTypes.AppointmentPage:
+                pageElement = <AppointmentPageEleia />;
+                break;
+
+            case PageTypes.ListAppointmentsPage:
+                pageElement = <ListAppointmentPageEleia />;
+                break;
+
+            case PageTypes.MedicSchedulePage:
+                pageElement = <MedicEventPageEleia />;
+                break;
+
+            case PageTypes.ManageSchedulePage:
+                pageElement = <ManageMedicEventPageEleia />;
+                break;
+
+            case PageTypes.EducationSchedulePage:
+                pageElement = <EducationPageEleia />;
+                break;
+
+            case PageTypes.ManageEducationPage:
+                pageElement = <ManageEducationPageEleia />;
+                break;
+
+            case PageTypes.UserCalendarPage:
+                pageElement = <UserCalendarPageEleia />;
+                break;
+
+            case PageTypes.ProfilePage:
+                pageElement = <ProfilePageEleia />;
+                break;
                 break;
         }
 
@@ -591,7 +635,7 @@ const LoggedInView = createReactClass({
             topBar = <CookieBar policyUrl={policyUrl} />;
         } else if (this.props.hasNewVersion) {
             topBar = <NewVersionBar version={this.props.version} newVersion={this.props.newVersion}
-                                    releaseNotes={this.props.newVersionReleaseNotes}
+                releaseNotes={this.props.newVersionReleaseNotes}
             />;
         } else if (this.props.checkingForUpdate) {
             topBar = <UpdateCheckBar {...this.props.checkingForUpdate} />;
@@ -609,6 +653,9 @@ const LoggedInView = createReactClass({
             bodyClasses += ' mx_MatrixChat_useCompactLayout';
         }
 
+        // Eleia Toolbar
+        topBar = <NavBarMin />
+
         return (
             <MatrixClientContext.Provider value={this._matrixClient}>
                 <div
@@ -619,7 +666,7 @@ const LoggedInView = createReactClass({
                     onMouseDown={this._onMouseDown}
                     onMouseUp={this._onMouseUp}
                 >
-                    { topBar }
+                    {topBar}
                     <ToastContainer />
                     <DragDropContext onDragEnd={this._onDragEnd}>
                         <div ref={this._setResizeContainerRef} className={bodyClasses}>
@@ -629,7 +676,7 @@ const LoggedInView = createReactClass({
                                 disabled={this.props.leftDisabled}
                             />
                             <ResizeHandle />
-                            { pageElement }
+                            {pageElement}
                         </div>
                     </DragDropContext>
                 </div>

@@ -158,6 +158,9 @@ export default createReactClass({
 
             canReact: false,
             canReply: false,
+
+            openDisclaimer: false,
+            refParent: null,
         };
     },
 
@@ -438,6 +441,8 @@ export default createReactClass({
                 roomView.addEventListener('dragleave', this.onDragLeaveOrEnd);
                 roomView.addEventListener('dragend', this.onDragLeaveOrEnd);
             }
+
+            this.setState({refParent: this.refs.roomView});
         }
 
         // Note: We check the ref here with a flag because componentDidMount, despite
@@ -1617,6 +1622,10 @@ export default createReactClass({
         dis.dispatch({action: "view_room", room_id: oldRoom.roomId});
     },
 
+    showingDisclaimer : function(show) {
+		this.setState({openDisclaimer: show});
+	},
+
     render: function() {
         const RoomHeader = sdk.getComponent('rooms.RoomHeader');
         const ForwardMessage = sdk.getComponent("rooms.ForwardMessage");
@@ -1630,6 +1639,7 @@ export default createReactClass({
         const RoomUpgradeWarningBar = sdk.getComponent("rooms.RoomUpgradeWarningBar");
         const RoomRecoveryReminder = sdk.getComponent("rooms.RoomRecoveryReminder");
         const ErrorBoundary = sdk.getComponent("elements.ErrorBoundary");
+        const DialogAcceptanceRoom = sdk.getComponent('eleia.DialogAcceptanceRoom');
 
         if (!this.state.room) {
             const loading = this.state.roomLoading || this.state.peekLoading;
@@ -2008,7 +2018,7 @@ export default createReactClass({
 
         return (
             <RoomContext.Provider value={this.state}>
-                <main className={"mx_RoomView" + (inCall ? " mx_RoomView_inCall" : "")} ref={this._roomView}>
+                <main className={"mx_RoomView" + (inCall ? " mx_RoomView_inCall" : "")} style={{transform: this.state.openDisclaimer ? "translateZ(0)" : 'inherit'}} ref={this._roomView}>
                     <ErrorBoundary>
                         <RoomHeader
                             room={this.state.room}
@@ -2046,6 +2056,7 @@ export default createReactClass({
                             </div>
                         </MainSplit>
                     </ErrorBoundary>
+                    <DialogAcceptanceRoom roomId={this.state.roomId} refParent={this.state.refParent} disclaimer={this.showingDisclaimer} />
                 </main>
             </RoomContext.Provider>
         );

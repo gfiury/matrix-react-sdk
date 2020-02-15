@@ -30,7 +30,7 @@ import 'what-input';
 
 import Analytics from "../../Analytics";
 import { DecryptionFailureTracker } from "../../DecryptionFailureTracker";
-import {MatrixClientPeg} from "../../MatrixClientPeg";
+import { MatrixClientPeg } from "../../MatrixClientPeg";
 import PlatformPeg from "../../PlatformPeg";
 import SdkConfig from "../../SdkConfig";
 import * as RoomListSorter from "../../RoomListSorter";
@@ -52,7 +52,7 @@ import { getHomePageUrl } from '../../utils/pages';
 import createRoom from "../../createRoom";
 import KeyRequestHandler from '../../KeyRequestHandler';
 import { _t, getCurrentLanguage } from '../../languageHandler';
-import SettingsStore, {SettingLevel} from "../../settings/SettingsStore";
+import SettingsStore, { SettingLevel } from "../../settings/SettingsStore";
 import ThemeController from "../../settings/controllers/ThemeController";
 import { startAnyRegistrationFlow } from "../../Registration.js";
 import { messageForSyncError } from '../../utils/ErrorUtils';
@@ -151,7 +151,7 @@ export default createReactClass({
         makeRegistrationUrl: PropTypes.func.isRequired,
     },
 
-    getInitialState: function() {
+    getInitialState: function () {
         const s = {
             // the master view we are showing.
             view: VIEWS.LOADING,
@@ -196,16 +196,16 @@ export default createReactClass({
         return s;
     },
 
-    getDefaultProps: function() {
+    getDefaultProps: function () {
         return {
             realQueryParams: {},
             startingFragmentQueryParams: {},
             config: {},
-            onTokenLoginCompleted: () => {},
+            onTokenLoginCompleted: () => { },
         };
     },
 
-    getFallbackHsUrl: function() {
+    getFallbackHsUrl: function () {
         if (this.props.serverConfig && this.props.serverConfig.isDefault) {
             return this.props.config.fallback_hs_url;
         } else {
@@ -217,10 +217,10 @@ export default createReactClass({
         let props = this.state.serverConfig;
         if (!props) props = this.props.serverConfig; // for unit tests
         if (!props) props = SdkConfig.get()["validated_server_config"];
-        return {serverConfig: props};
+        return { serverConfig: props };
     },
 
-    componentWillMount: function() {
+    componentWillMount: function () {
         SdkConfig.put(this.props.config);
 
         // Used by _viewRoom before getting state from sync
@@ -262,7 +262,7 @@ export default createReactClass({
         this._accountPasswordTimer = null;
     },
 
-    componentDidMount: function() {
+    componentDidMount: function () {
         this.dispatcherRef = dis.register(this.onAction);
         this._themeWatcher = new ThemeWatcher();
         this._themeWatcher.start();
@@ -327,7 +327,7 @@ export default createReactClass({
         }
     },
 
-    _loadSession: function() {
+    _loadSession: function () {
         // the extra Promise.resolve() ensures that synchronous exceptions hit the same codepath as
         // asynchronous ones.
         return Promise.resolve().then(() => {
@@ -341,7 +341,7 @@ export default createReactClass({
         }).then((loadedSession) => {
             if (!loadedSession) {
                 // fall back to showing the welcome screen
-                dis.dispatch({action: "view_welcome_page"});
+                dis.dispatch({ action: "view_welcome_page" });
             }
         });
         // Note we don't catch errors from this: we catch everything within
@@ -349,7 +349,7 @@ export default createReactClass({
         // to try logging out.
     },
 
-    componentWillUnmount: function() {
+    componentWillUnmount: function () {
         Lifecycle.stopMatrixClient();
         dis.unregister(this.dispatcherRef);
         this._themeWatcher.stop();
@@ -360,19 +360,19 @@ export default createReactClass({
         if (this._accountPasswordTimer !== null) clearTimeout(this._accountPasswordTimer);
     },
 
-    componentWillUpdate: function(props, state) {
+    componentWillUpdate: function (props, state) {
         if (this.shouldTrackPageChange(this.state, state)) {
             this.startPageChangeTimer();
         }
     },
 
-    componentDidUpdate: function(prevProps, prevState) {
+    componentDidUpdate: function (prevProps, prevState) {
         if (this.shouldTrackPageChange(prevState, this.state)) {
             const durationMs = this.stopPageChangeTimer();
             Analytics.trackPageChange(durationMs);
         }
         if (this.focusComposer) {
-            dis.dispatch({action: 'focus_composer'});
+            dis.dispatch({ action: 'focus_composer' });
             this.focusComposer = false;
         }
     },
@@ -422,7 +422,7 @@ export default createReactClass({
             prevState.page_type !== state.page_type;
     },
 
-    setStateForNewView: function(state) {
+    setStateForNewView: function (state) {
         if (state.view === undefined) {
             throw new Error("setStateForNewView with no view!");
         }
@@ -433,7 +433,7 @@ export default createReactClass({
         this.setState(newState);
     },
 
-    onAction: function(payload) {
+    onAction: function (payload) {
         // console.log(`MatrixClientPeg.onAction: ${payload.action}`);
         const ErrorDialog = sdk.getComponent("dialogs.ErrorDialog");
         const QuestionDialog = sdk.getComponent("dialogs.QuestionDialog");
@@ -450,7 +450,7 @@ export default createReactClass({
                 action: 'do_after_sync_prepared',
                 deferred_action: payload,
             });
-            dis.dispatch({action: 'require_registration'});
+            dis.dispatch({ action: 'require_registration' });
             return;
         }
 
@@ -475,7 +475,7 @@ export default createReactClass({
                     }
 
                     // redispatch the change with a more specific action
-                    dis.dispatch({action: 'id_server_changed'});
+                    dis.dispatch({ action: 'id_server_changed' });
                 }
                 break;
             case 'logout':
@@ -542,7 +542,7 @@ export default createReactClass({
                             MatrixClientPeg.get().leave(payload.room_id).then(() => {
                                 modal.close();
                                 if (this.state.currentRoomId === payload.room_id) {
-                                    dis.dispatch({action: 'view_next_room'});
+                                    dis.dispatch({ action: 'view_next_room' });
                                 }
                             }, (err) => {
                                 modal.close();
@@ -590,7 +590,7 @@ export default createReactClass({
                 const CreateGroupDialog = sdk.getComponent("dialogs.CreateGroupDialog");
                 Modal.createTrackedDialog('Create Community', '', CreateGroupDialog);
             }
-            break;
+                break;
             case 'view_room_directory': {
                 const RoomDirectory = sdk.getComponent("structures.RoomDirectory");
                 Modal.createTrackedDialog('Room directory', '', RoomDirectory, {
@@ -600,7 +600,7 @@ export default createReactClass({
                 // View the welcome or home page if we need something to look at
                 this._viewSomethingBehindModal();
             }
-            break;
+                break;
             case 'view_my_groups':
                 this._setPage(PageTypes.MyGroups);
                 this.notifyNewScreen('groups');
@@ -637,14 +637,14 @@ export default createReactClass({
                 // We just dispatch the page change rather than have to worry about
                 // what the logic is for each of these branches.
                 if (this.state.page_type === PageTypes.MyGroups) {
-                    dis.dispatch({action: 'view_last_screen'});
+                    dis.dispatch({ action: 'view_last_screen' });
                 } else {
-                    dis.dispatch({action: 'view_my_groups'});
+                    dis.dispatch({ action: 'view_my_groups' });
                 }
                 break;
             case 'notifier_enabled': {
-                    this.setState({showNotifierToolbar: Notifier.shouldShowToolbar()});
-                }
+                this.setState({ showNotifierToolbar: Notifier.shouldShowToolbar() });
+            }
                 break;
             case 'hide_left_panel':
                 this.setState({
@@ -682,7 +682,7 @@ export default createReactClass({
                 this._onLoggedOut();
                 break;
             case 'will_start_client':
-                this.setState({ready: false}, () => {
+                this.setState({ ready: false }, () => {
                     // if the client is about to start, we are, by definition, not ready.
                     // Set ready to false now, then it'll be set to true when the sync
                     // listener we set below fires.
@@ -731,16 +731,38 @@ export default createReactClass({
                     showCookieBar: false,
                 });
                 break;
+
+            case 'view_home_page':
+                this._viewHome();
+                break;
+            case 'view_appointment_page':
+                this._viewNewAppointment();
+                break;
+            case 'view_list_appointments_page':
+                this._viewListAppointments();
+                break;
+            case 'view_medic_schedule_page':
+                this._viewMedicSchedule();
+                break;
+            case 'view_manage_schedule_page':
+                this._viewManageSchedule();
+                break;
+            case 'view_user_calendar_page':
+                this._viewUserCalendar();
+                break;
+            case 'view_profile_page':
+                this._viewProfile();
+                break;
         }
     },
 
-    _setPage: function(pageType) {
+    _setPage: function (pageType) {
         this.setState({
             page_type: pageType,
         });
     },
 
-    _startRegistration: async function(params) {
+    _startRegistration: async function (params) {
         const newState = {
             view: VIEWS.REGISTER,
         };
@@ -769,7 +791,7 @@ export default createReactClass({
     },
 
     // TODO: Move to RoomViewStore
-    _viewNextRoom: function(roomIndexDelta) {
+    _viewNextRoom: function (roomIndexDelta) {
         const allRooms = RoomListSorter.mostRecentActivityFirst(
             MatrixClientPeg.get().getRooms(),
         );
@@ -798,7 +820,7 @@ export default createReactClass({
     },
 
     // TODO: Move to RoomViewStore
-    _viewIndexedRoom: function(roomIndex) {
+    _viewIndexedRoom: function (roomIndex) {
         const allRooms = RoomListSorter.mostRecentActivityFirst(
             MatrixClientPeg.get().getRooms(),
         );
@@ -827,7 +849,7 @@ export default createReactClass({
     // @param {Object=} roomInfo.oob_data Object of additional data about the room
     //                               that has been passed out-of-band (eg.
     //                               room name and avatar from an invite email)
-    _viewRoom: function(roomInfo) {
+    _viewRoom: function (roomInfo) {
         this.focusComposer = true;
 
         const newState = {
@@ -884,13 +906,13 @@ export default createReactClass({
                 presentedId += "/" + roomInfo.event_id;
             }
             newState.ready = true;
-            this.setState(newState, ()=>{
+            this.setState(newState, () => {
                 this.notifyNewScreen('room/' + presentedId);
             });
         });
     },
 
-    _viewGroup: function(payload) {
+    _viewGroup: function (payload) {
         const groupId = payload.group_id;
         this.setState({
             currentGroupId: groupId,
@@ -919,7 +941,7 @@ export default createReactClass({
         this._themeWatcher.recheck();
     },
 
-    _viewHome: function() {
+    _viewHome: function () {
         // The home page requires the "logged in" view, so we'll set that.
         this.setStateForNewView({
             view: VIEWS.LOGGED_IN,
@@ -930,7 +952,61 @@ export default createReactClass({
         this._themeWatcher.recheck();
     },
 
-    _viewUser: function(userId, subAction) {
+    _viewNewAppointment: function () {
+        // The home page requires the "logged in" view, so we'll set that.
+        this.setStateForNewView({
+            view: VIEWS.LOGGED_IN,
+        });
+        this._setPage(PageTypes.AppointmentPage);
+        this.notifyNewScreen('newappointment');
+    },
+
+    _viewListAppointments: function () {
+        // The home page requires the "logged in" view, so we'll set that.
+        this.setStateForNewView({
+            view: VIEWS.LOGGED_IN,
+        });
+        this._setPage(PageTypes.ListAppointmentsPage);
+        this.notifyNewScreen('listappointments');
+    },
+
+    _viewMedicSchedule: function () {
+        // The home page requires the "logged in" view, so we'll set that.
+        this.setStateForNewView({
+            view: VIEWS.LOGGED_IN,
+        });
+        this._setPage(PageTypes.MedicSchedulePage);
+        this.notifyNewScreen('mediceventpage');
+    },
+
+    _viewManageSchedule: function () {
+        // The home page requires the "logged in" view, so we'll set that.
+        this.setStateForNewView({
+            view: VIEWS.LOGGED_IN,
+        });
+        this._setPage(PageTypes.ManageSchedulePage);
+        this.notifyNewScreen('manageschedule');
+    },
+
+    _viewUserCalendar: function () {
+        // The home page requires the "logged in" view, so we'll set that.
+        this.setStateForNewView({
+            view: VIEWS.LOGGED_IN,
+        });
+        this._setPage(PageTypes.UserCalendarPage);
+        this.notifyNewScreen('mycalendar');
+    },
+
+    _viewProfile: function () {
+        // The home page requires the "logged in" view, so we'll set that.
+        this.setStateForNewView({
+            view: VIEWS.LOGGED_IN,
+        });
+        this._setPage(PageTypes.ProfilePage);
+        this.notifyNewScreen('profile');
+    },
+
+    _viewUser: function (userId, subAction) {
         // Wait for the first sync so that `getRoom` gives us a room object if it's
         // in the sync response
         const waitForSync = this.firstSyncPromise ?
@@ -941,12 +1017,12 @@ export default createReactClass({
                 return;
             }
             this.notifyNewScreen('user/' + userId);
-            this.setState({currentUserId: userId});
+            this.setState({ currentUserId: userId });
             this._setPage(PageTypes.UserView);
         });
     },
 
-    _setMxId: function(payload) {
+    _setMxId: function (payload) {
         const SetMxIdDialog = sdk.getComponent('views.dialogs.SetMxIdDialog');
         const close = Modal.createTrackedDialog('Set MXID', '', SetMxIdDialog, {
             homeserverUrl: MatrixClientPeg.get().getHomeserverUrl(),
@@ -966,17 +1042,17 @@ export default createReactClass({
                 this.onRegistered(credentials);
             },
             onDifferentServerClicked: (ev) => {
-                dis.dispatch({action: 'start_registration'});
+                dis.dispatch({ action: 'start_registration' });
                 close();
             },
             onLoginClick: (ev) => {
-                dis.dispatch({action: 'start_login'});
+                dis.dispatch({ action: 'start_login' });
                 close();
             },
         }).close;
     },
 
-    _createRoom: async function() {
+    _createRoom: async function () {
         const CreateRoomDialog = sdk.getComponent('dialogs.CreateRoomDialog');
         const modal = Modal.createTrackedDialog('Create Room', '', CreateRoomDialog);
 
@@ -986,7 +1062,7 @@ export default createReactClass({
         }
     },
 
-    _chatCreateOrReuse: function(userId) {
+    _chatCreateOrReuse: function (userId) {
         // Use a deferred action to reshow the dialog once the user has registered
         if (MatrixClientPeg.get().isGuest()) {
             // No point in making 2 DMs with welcome bot. This assumes view_set_mxid will
@@ -1030,7 +1106,7 @@ export default createReactClass({
         }
     },
 
-    _leaveRoomWarnings: function(roomId) {
+    _leaveRoomWarnings: function (roomId) {
         const roomToLeave = MatrixClientPeg.get().getRoom(roomId);
         // Show a warning if there are additional complications.
         const joinRules = roomToLeave.currentState.getStateEvents('m.room.join_rules', '');
@@ -1040,8 +1116,8 @@ export default createReactClass({
             if (rule !== "public") {
                 warnings.push((
                     <span className="warning" key="non_public_warning">
-                        {' '/* Whitespace, otherwise the sentences get smashed together */ }
-                        { _t("This room is not public. You will not be able to rejoin without an invite.") }
+                        {' '/* Whitespace, otherwise the sentences get smashed together */}
+                        {_t("This room is not public. You will not be able to rejoin without an invite.")}
                     </span>
                 ));
             }
@@ -1049,7 +1125,7 @@ export default createReactClass({
         return warnings;
     },
 
-    _leaveRoom: function(roomId) {
+    _leaveRoom: function (roomId) {
         const QuestionDialog = sdk.getComponent("dialogs.QuestionDialog");
         const ErrorDialog = sdk.getComponent("dialogs.ErrorDialog");
         const roomToLeave = MatrixClientPeg.get().getRoom(roomId);
@@ -1059,8 +1135,8 @@ export default createReactClass({
             title: _t("Leave room"),
             description: (
                 <span>
-                { _t("Are you sure you want to leave the room '%(roomName)s'?", {roomName: roomToLeave.name}) }
-                { warnings }
+                    {_t("Are you sure you want to leave the room '%(roomName)s'?", { roomName: roomToLeave.name })}
+                    {warnings}
                 </span>
             ),
             button: _t("Leave"),
@@ -1099,7 +1175,7 @@ export default createReactClass({
                         }
 
                         if (this.state.currentRoomId === roomId) {
-                            dis.dispatch({action: 'view_next_room'});
+                            dis.dispatch({ action: 'view_next_room' });
                         }
                     }, (err) => {
                         // This should only happen if something went seriously wrong with leaving the chain.
@@ -1173,7 +1249,7 @@ export default createReactClass({
     /**
      * Called when a new logged in session has started
      */
-    _onLoggedIn: async function() {
+    _onLoggedIn: async function () {
         this.setStateForNewView({ view: VIEWS.LOGGED_IN });
         if (MatrixClientPeg.currentUserIsJustRegistered()) {
             MatrixClientPeg.setJustRegisteredUserId(null);
@@ -1183,19 +1259,19 @@ export default createReactClass({
                 if (welcomeUserRoom === null) {
                     // We didn't redirect to the welcome user room, so show
                     // the homepage.
-                    dis.dispatch({action: 'view_home_page'});
+                    dis.dispatch({ action: 'view_home_page' });
                 }
             } else {
                 // The user has just logged in after registering,
                 // so show the homepage.
-                dis.dispatch({action: 'view_home_page'});
+                dis.dispatch({ action: 'view_home_page' });
             }
         } else {
             this._showScreenAfterLogin();
         }
     },
 
-    _showScreenAfterLogin: function() {
+    _showScreenAfterLogin: function () {
         // If screenAfterLogin is set, use that, then null it so that a second login will
         // result in view_home_page, _user_settings or _room_directory
         if (this._screenAfterLogin && this._screenAfterLogin.screen) {
@@ -1209,18 +1285,18 @@ export default createReactClass({
             this._viewLastRoom();
         } else {
             if (MatrixClientPeg.get().isGuest()) {
-                dis.dispatch({action: 'view_welcome_page'});
+                dis.dispatch({ action: 'view_welcome_page' });
             } else if (getHomePageUrl(this.props.config)) {
-                dis.dispatch({action: 'view_home_page'});
+                dis.dispatch({ action: 'view_home_page' });
             } else {
                 this.firstSyncPromise.promise.then(() => {
-                    dis.dispatch({action: 'view_next_room'});
+                    dis.dispatch({ action: 'view_next_room' });
                 });
             }
         }
     },
 
-    _viewLastRoom: function() {
+    _viewLastRoom: function () {
         dis.dispatch({
             action: 'view_room',
             room_id: localStorage.getItem('mx_last_room_id'),
@@ -1230,7 +1306,7 @@ export default createReactClass({
     /**
      * Called when the session is logged out
      */
-    _onLoggedOut: function() {
+    _onLoggedOut: function () {
         this.notifyNewScreen('login');
         this.setStateForNewView({
             view: VIEWS.LOGIN,
@@ -1247,7 +1323,7 @@ export default createReactClass({
     /**
      * Called when the session is softly logged out
      */
-    _onSoftLogout: function() {
+    _onSoftLogout: function () {
         this.notifyNewScreen('soft_logout');
         this.setStateForNewView({
             view: VIEWS.SOFT_LOGOUT,
@@ -1279,7 +1355,7 @@ export default createReactClass({
         // particularly noticeable when there are lots of 'limited' /sync responses
         // such as when laptops unsleep.
         // https://github.com/vector-im/riot-web/issues/3307#issuecomment-282895568
-        cli.setCanResetTimelineCallback(function(roomId) {
+        cli.setCanResetTimelineCallback(function (roomId) {
             console.log("Request to reset timeline in room ", roomId, " viewing:", self.state.currentRoomId);
             if (roomId !== self.state.currentRoomId) {
                 // It is safe to remove events from rooms we are not viewing.
@@ -1295,21 +1371,21 @@ export default createReactClass({
             return self._loggedInView.child.canResetTimelineInRoom(roomId);
         });
 
-        cli.on('sync', function(state, prevState, data) {
+        cli.on('sync', function (state, prevState, data) {
             // LifecycleStore and others cannot directly subscribe to matrix client for
             // events because flux only allows store state changes during flux dispatches.
             // So dispatch directly from here. Ideally we'd use a SyncStateStore that
             // would do this dispatch and expose the sync state itself (by listening to
             // its own dispatch).
-            dis.dispatch({action: 'sync_state', prevState, state});
+            dis.dispatch({ action: 'sync_state', prevState, state });
 
             if (state === "ERROR" || state === "RECONNECTING") {
                 if (data.error instanceof Matrix.InvalidStoreError) {
                     Lifecycle.handleInvalidStoreError(data.error);
                 }
-                self.setState({syncError: data.error || true});
+                self.setState({ syncError: data.error || true });
             } else if (self.state.syncError) {
-                self.setState({syncError: null});
+                self.setState({ syncError: null });
             }
 
             self.updateStatusIndicator(state, prevState);
@@ -1322,13 +1398,13 @@ export default createReactClass({
             self.firstSyncComplete = true;
             self.firstSyncPromise.resolve();
 
-            dis.dispatch({action: 'focus_composer'});
+            dis.dispatch({ action: 'focus_composer' });
             self.setState({
                 ready: true,
                 showNotifierToolbar: Notifier.shouldShowToolbar(),
             });
         });
-        cli.on('Call.incoming', function(call) {
+        cli.on('Call.incoming', function (call) {
             // we dispatch this synchronously to make sure that the event
             // handlers on the call are set up immediately (so that if
             // we get an immediate hangup, we don't get a stuck call)
@@ -1337,7 +1413,7 @@ export default createReactClass({
                 call: call,
             }, true);
         });
-        cli.on('Session.logged_out', function(errObj) {
+        cli.on('Session.logged_out', function (errObj) {
             if (Lifecycle.isLoggingOut()) return;
 
             if (errObj.httpStatus === 401 && errObj.data && errObj.data['soft_logout']) {
@@ -1355,16 +1431,16 @@ export default createReactClass({
                 action: 'logout',
             });
         });
-        cli.on('no_consent', function(message, consentUri) {
+        cli.on('no_consent', function (message, consentUri) {
             const QuestionDialog = sdk.getComponent("dialogs.QuestionDialog");
             Modal.createTrackedDialog('No Consent Dialog', '', QuestionDialog, {
                 title: _t('Terms and Conditions'),
                 description: <div>
-                    <p> { _t(
-                            'To continue using the %(homeserverDomain)s homeserver ' +
-                            'you must review and agree to our terms and conditions.',
-                            { homeserverDomain: cli.getDomain() },
-                        ) }
+                    <p> {_t(
+                        'To continue using the %(homeserverDomain)s homeserver ' +
+                        'you must review and agree to our terms and conditions.',
+                        { homeserverDomain: cli.getDomain() },
+                    )}
                     </p>
                 </div>,
                 button: _t('Review terms and conditions'),
@@ -1431,12 +1507,12 @@ export default createReactClass({
                     Modal.createTrackedDialog('Crypto migrated', '', ErrorDialog, {
                         title: _t('Old cryptography data detected'),
                         description: _t(
-                            "Data from an older version of Riot has been detected. "+
-                            "This will have caused end-to-end cryptography to malfunction "+
-                            "in the older version. End-to-end encrypted messages exchanged "+
-                            "recently whilst using the older version may not be decryptable "+
-                            "in this version. This may also cause messages exchanged with this "+
-                            "version to fail. If you experience problems, log out and back in "+
+                            "Data from an older version of Riot has been detected. " +
+                            "This will have caused end-to-end cryptography to malfunction " +
+                            "in the older version. End-to-end encrypted messages exchanged " +
+                            "recently whilst using the older version may not be decryptable " +
+                            "in this version. This may also cause messages exchanged with this " +
+                            "version to fail. If you experience problems, log out and back in " +
                             "again. To retain message history, export and re-import your keys.",
                         ),
                     });
@@ -1479,7 +1555,7 @@ export default createReactClass({
                         key: 'verifreq_' + request.channel.transactionId,
                         title: _t("Verification Request"),
                         icon: "verification",
-                        props: {request},
+                        props: { request },
                         component: sdk.getComponent("toasts.VerificationRequestToast"),
                     });
                 }
@@ -1503,7 +1579,7 @@ export default createReactClass({
      * setting up anything that requires the client to be started.
      * @private
      */
-    _onClientStarted: function() {
+    _onClientStarted: function () {
         const cli = MatrixClientPeg.get();
 
         if (cli.isCryptoEnabled()) {
@@ -1524,7 +1600,7 @@ export default createReactClass({
         }
     },
 
-    showScreen: function(screen, params) {
+    showScreen: function (screen, params) {
         if (screen == 'register') {
             dis.dispatch({
                 action: 'start_registration',
@@ -1588,6 +1664,30 @@ export default createReactClass({
             dis.dispatch({
                 action: 'start_post_registration',
             });
+        } else if (screen == 'newappointment') {
+            dis.dispatch({
+                action: 'view_appointment_page',
+            });
+        } else if (screen == 'mediceventpage') {
+            dis.dispatch({
+                action: 'view_medic_schedule_page',
+            });
+        } else if (screen == 'listappointments') {
+            dis.dispatch({
+                action: 'view_list_appointments_page',
+            });
+        } else if (screen == 'manageschedule') {
+            dis.dispatch({
+                action: 'view_manage_schedule_page',
+            });
+        } else if (screen == 'profile') {
+            dis.dispatch({
+                action: 'view_profile_page',
+            });
+        } else if (screen == 'mycalendar') {
+            dis.dispatch({
+                action: 'view_user_calendar_page',
+            });
         } else if (screen.indexOf('room/') == 0) {
             // Rooms can have the following formats:
             // #room_alias:domain or !opaque_id:domain
@@ -1628,7 +1728,7 @@ export default createReactClass({
             // then params.via is an array of strings.
             let via = [];
             if (params.via) {
-                if (typeof(params.via) === 'string') via = [params.via];
+                if (typeof (params.via) === 'string') via = [params.via];
                 else via = params.via;
             }
 
@@ -1671,19 +1771,19 @@ export default createReactClass({
         }
     },
 
-    notifyNewScreen: function(screen) {
+    notifyNewScreen: function (screen) {
         if (this.props.onNewScreen) {
             this.props.onNewScreen(screen);
         }
         this._setPageSubtitle();
     },
 
-    onAliasClick: function(event, alias) {
+    onAliasClick: function (event, alias) {
         event.preventDefault();
-        dis.dispatch({action: 'view_room', room_alias: alias});
+        dis.dispatch({ action: 'view_room', room_alias: alias });
     },
 
-    onUserClick: function(event, userId) {
+    onUserClick: function (event, userId) {
         event.preventDefault();
 
         const member = new Matrix.RoomMember(null, userId);
@@ -1694,12 +1794,12 @@ export default createReactClass({
         });
     },
 
-    onGroupClick: function(event, groupId) {
+    onGroupClick: function (event, groupId) {
         event.preventDefault();
-        dis.dispatch({action: 'view_group', group_id: groupId});
+        dis.dispatch({ action: 'view_group', group_id: groupId });
     },
 
-    onLogoutClick: function(event) {
+    onLogoutClick: function (event) {
         dis.dispatch({
             action: 'logout',
         });
@@ -1707,7 +1807,7 @@ export default createReactClass({
         event.preventDefault();
     },
 
-    handleResize: function(e) {
+    handleResize: function (e) {
         const hideLhsThreshold = 1000;
         const showLhsThreshold = 1000;
 
@@ -1726,35 +1826,35 @@ export default createReactClass({
         dis.dispatch({ action: 'timeline_resize' });
     },
 
-    onRoomCreated: function(roomId) {
+    onRoomCreated: function (roomId) {
         dis.dispatch({
             action: "view_room",
             room_id: roomId,
         });
     },
 
-    onRegisterClick: function() {
+    onRegisterClick: function () {
         this.showScreen("register");
     },
 
-    onLoginClick: function() {
+    onLoginClick: function () {
         this.showScreen("login");
     },
 
-    onForgotPasswordClick: function() {
+    onForgotPasswordClick: function () {
         this.showScreen("forgot_password");
     },
 
-    onRegisterFlowComplete: function(credentials, password) {
+    onRegisterFlowComplete: function (credentials, password) {
         return this.onUserCompletedLoginFlow(credentials, password);
     },
 
     // returns a promise which resolves to the new MatrixClient
-    onRegistered: function(credentials) {
+    onRegistered: function (credentials) {
         return Lifecycle.setLoggedIn(credentials);
     },
 
-    onFinishPostRegistration: function() {
+    onFinishPostRegistration: function () {
         // Don't confuse this with "PageType" which is the middle window to show
         this.setState({
             view: VIEWS.LOGGED_IN,
@@ -1762,7 +1862,7 @@ export default createReactClass({
         this.showScreen("settings");
     },
 
-    onVersion: function(current, latest, releaseNotes) {
+    onVersion: function (current, latest, releaseNotes) {
         this.setState({
             version: current,
             newVersion: latest,
@@ -1772,26 +1872,26 @@ export default createReactClass({
         });
     },
 
-    onSendEvent: function(roomId, event) {
+    onSendEvent: function (roomId, event) {
         const cli = MatrixClientPeg.get();
         if (!cli) {
-            dis.dispatch({action: 'message_send_failed'});
+            dis.dispatch({ action: 'message_send_failed' });
             return;
         }
 
         cli.sendEvent(roomId, event.getType(), event.getContent()).then(() => {
-            dis.dispatch({action: 'message_sent'});
+            dis.dispatch({ action: 'message_sent' });
         }, (err) => {
-            dis.dispatch({action: 'message_send_failed'});
+            dis.dispatch({ action: 'message_send_failed' });
         });
     },
 
-    _setPageSubtitle: function(subtitle='') {
+    _setPageSubtitle: function (subtitle = '') {
         if (this.state.currentRoomId) {
             const client = MatrixClientPeg.get();
             const room = client && client.getRoom(this.state.currentRoomId);
             if (room) {
-                subtitle = `${this.subTitleStatus} | ${ room.name } ${subtitle}`;
+                subtitle = `${this.subTitleStatus} | ${room.name} ${subtitle}`;
             }
         } else {
             subtitle = `${this.subTitleStatus} ${subtitle}`;
@@ -1799,7 +1899,7 @@ export default createReactClass({
         document.title = `${SdkConfig.get().brand || 'Riot'} ${subtitle}`;
     },
 
-    updateStatusIndicator: function(state, prevState) {
+    updateStatusIndicator: function (state, prevState) {
         const notifCount = countRoomsWithNotif(MatrixClientPeg.get().getRooms()).count;
 
         if (PlatformPeg.get()) {
@@ -1823,17 +1923,17 @@ export default createReactClass({
     },
 
     onServerConfigChange(config) {
-        this.setState({serverConfig: config});
+        this.setState({ serverConfig: config });
     },
 
-    _makeRegistrationUrl: function(params) {
+    _makeRegistrationUrl: function (params) {
         if (this.props.startingFragmentQueryParams.referrer) {
             params.referrer = this.props.startingFragmentQueryParams.referrer;
         }
         return this.props.makeRegistrationUrl(params);
     },
 
-    _collectLoggedInView: function(ref) {
+    _collectLoggedInView: function (ref) {
         this._loggedInView = ref;
     },
 
@@ -1902,7 +2002,7 @@ export default createReactClass({
         this._onLoggedIn();
     },
 
-    render: function() {
+    render: function () {
         // console.log(`Rendering MatrixChat with view ${this.state.view}`);
 
         let view;

@@ -316,7 +316,7 @@ export default class MessageComposer extends React.Component {
             const SendMessageComposer = sdk.getComponent("rooms.SendMessageComposer");
             const callInProgress = this.props.callState && this.props.callState !== 'ended';
 
-            controls.push(
+            /*controls.push(
                 <SendMessageComposer
                     ref={(c) => this.messageComposerInput = c}
                     key="controls_input"
@@ -328,6 +328,16 @@ export default class MessageComposer extends React.Component {
                 callInProgress ? <HangupButton key="controls_hangup" roomId={this.props.room.roomId} /> : null,
                 callInProgress ? null : <CallButton key="controls_call" roomId={this.props.room.roomId} />,
                 callInProgress ? null : <VideoCallButton key="controls_videocall" roomId={this.props.room.roomId} />,
+            );*/
+            controls.push(
+                <SendMessageComposer
+                    ref={(c) => this.messageComposerInput = c}
+                    key="controls_input"
+                    room={this.props.room}
+                    placeholder={this.renderPlaceholderText()}
+                    permalinkCreator={this.props.permalinkCreator} />,
+                <UploadButton key="controls_upload" roomId={this.props.room.roomId} />,
+                <VideoCallButton key="controls_videocall" roomId={this.props.room.roomId} />,
             );
         } else if (this.state.tombstone) {
             const replacementRoomId = this.state.tombstone.getContent()['replacement_room'];

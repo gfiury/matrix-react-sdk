@@ -328,7 +328,7 @@ function _onAction(payload) {
                 }
 
                 const members = room.getJoinedMembers();
-                if (members.length <= 1) {
+                /*if (members.length <= 1) {
                     const ErrorDialog = sdk.getComponent("dialogs.ErrorDialog");
                     Modal.createTrackedDialog('Call Handler', 'Cannot place call with self', ErrorDialog, {
                         description: _t('You cannot place a call with yourself.'),
@@ -339,6 +339,22 @@ function _onAction(payload) {
                     const call = Matrix.createNewMatrixCall(MatrixClientPeg.get(), payload.room_id);
                     placeCall(call);
                 } else { // > 2
+                    dis.dispatch({
+                        action: "place_conference_call",
+                        room_id: payload.room_id,
+                        type: payload.type,
+                        remote_element: payload.remote_element,
+                        local_element: payload.local_element,
+                    });
+                }*/
+
+                if (members.length <= 1) {
+                    const ErrorDialog = sdk.getComponent("dialogs.ErrorDialog");
+                    Modal.createTrackedDialog('Call Handler', 'Cannot place call with self', ErrorDialog, {
+                        description: _t('You cannot place a call with yourself.'),
+                    });
+                    return;
+                } else { // >= 2
                     dis.dispatch({
                         action: "place_conference_call",
                         room_id: payload.room_id,

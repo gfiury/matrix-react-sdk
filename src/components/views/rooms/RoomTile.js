@@ -455,6 +455,19 @@ export default createReactClass({
             tooltip = <Tooltip className="mx_RoomTile_tooltip" label={this.props.room.name} dir="auto" />;
         }
 
+        let labelTopic;
+		let topicText;
+		if (this.props.room) {
+            const ev = this.props.room.currentState.getStateEvents('m.room.topic', '');
+            if (ev) {
+                topicText = ev.getContent().topic;
+            }
+        }
+			
+		if (topicText != undefined && topicText != null) {
+			labelTopic = <div className="mx_RoomHeader_topic" ref="topic" title={topicText} dir="auto">{ topicText }</div>;
+		}
+
         //var incomingCallBox;
         //if (this.props.incomingCall) {
         //    var IncomingCallBox = sdk.getComponent("voip.IncomingCallBox");
@@ -565,6 +578,7 @@ export default createReactClass({
                             <div className="mx_RoomTile_labelContainer">
                                 { label }
                                 { subtextLabel }
+                                { labelTopic } 
                             </div>
                             { dmOnline }
                             { contextMenuButton }
