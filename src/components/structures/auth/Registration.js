@@ -657,11 +657,20 @@ export default createReactClass({
                 { regDoneText }
             </div>;
         } else {
-            body = <div>
+            /*body = <div>
                 <h2>{ _t('Create your account') }</h2>
                 { errorText }
                 { serverDeadSection }
                 { this.renderServerComponent() }
+                { this.renderRegisterComponent() }
+                { goBack }
+                { signIn }
+            </div>;*/
+			
+			body = <div>
+                <h2>{ _t('Create your account') }</h2>
+                { errorText }
+                { serverDeadSection }
                 { this.renderRegisterComponent() }
                 { goBack }
                 { signIn }
