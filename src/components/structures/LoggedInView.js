@@ -557,24 +557,25 @@ const LoggedInView = createReactClass({
                 break;
 
             case PageTypes.HomePage:
-                {
+                /*{
                     const pageUrl = getHomePageUrl(this.props.config);
                     pageElement = <EmbeddedPage className="mx_HomePage"
                         url={pageUrl}
                         scrollbar={true}
                     />;
-                }
+                }*/
+				pageElement = <HomePageEleia />;
                 break;
 
             case PageTypes.UserView:
                 pageElement = <UserView userId={this.props.currentUserId} />;
                 break;
             case PageTypes.GroupView:
-                /*pageElement = <GroupView
+                pageElement = <GroupView
                     groupId={this.props.currentGroupId}
                     isNew={this.props.currentGroupIsNew}
-                />;*/
-                pageElement = <HomePageEleia />
+                />;
+                break;
 
             case PageTypes.AppointmentPage:
                 pageElement = <AppointmentPageEleia />;

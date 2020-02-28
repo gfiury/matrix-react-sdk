@@ -159,8 +159,7 @@ export default createReactClass({
             canReact: false,
             canReply: false,
 
-            openDisclaimer: false,
-            refParent: null,
+            openDisclaimer: false
         };
     },
 
@@ -441,8 +440,6 @@ export default createReactClass({
                 roomView.addEventListener('dragleave', this.onDragLeaveOrEnd);
                 roomView.addEventListener('dragend', this.onDragLeaveOrEnd);
             }
-
-            this.setState({refParent: this.refs.roomView});
         }
 
         // Note: We check the ref here with a flag because componentDidMount, despite
@@ -2056,7 +2053,7 @@ export default createReactClass({
                             </div>
                         </MainSplit>
                     </ErrorBoundary>
-                    <DialogAcceptanceRoom roomId={this.state.roomId} refParent={this.state.refParent} disclaimer={this.showingDisclaimer} />
+                    <DialogAcceptanceRoom roomId={this.state.roomId} refParent={this._roomView.current} disclaimer={this.showingDisclaimer} />
                 </main>
             </RoomContext.Provider>
         );

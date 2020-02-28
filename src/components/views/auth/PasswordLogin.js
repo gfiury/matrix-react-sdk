@@ -319,12 +319,36 @@ export default class PasswordLogin extends React.Component {
             );
         }
 
-        return (
+        /*return (
             <div>
                 <SignInToText serverConfig={this.props.serverConfig}
                     onEditServerDetailsClick={this.props.onEditServerDetailsClick} />
                 <form onSubmit={this.onSubmitForm}>
                     {loginType}
+                    {loginField}
+                    <Field
+                        className={pwFieldClass}
+                        id="mx_PasswordLogin_password"
+                        type="password"
+                        name="password"
+                        label={_t('Password')}
+                        value={this.state.password}
+                        onChange={this.onPasswordChanged}
+                        disabled={this.props.disableSubmit}
+                    />
+                    {forgotPasswordJsx}
+                    <input className="mx_Login_submit"
+                        type="submit"
+                        value={_t('Sign in')}
+                        disabled={this.props.disableSubmit}
+                    />
+                </form>
+            </div>
+        );*/
+		
+		return (
+            <div>
+                <form onSubmit={this.onSubmitForm}>
                     {loginField}
                     <Field
                         className={pwFieldClass}
