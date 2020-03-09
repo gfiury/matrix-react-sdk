@@ -610,12 +610,33 @@ export default createReactClass({
             </div>;
         }
 
-        return (
+        /*return (
             <div>
                 <h3>
                     {yourMatrixAccountText}
                     {editLink}
                 </h3>
+                <form onSubmit={this.onSubmit}>
+                    <div className="mx_AuthBody_fieldRow">
+                        {this.renderUsername()}
+                    </div>
+                    <div className="mx_AuthBody_fieldRow">
+                        {this.renderPassword()}
+                        {this.renderPasswordConfirm()}
+                    </div>
+                    <div className="mx_AuthBody_fieldRow">
+                        {this.renderEmail()}
+                        {this.renderPhoneNumber()}
+                    </div>
+                    { emailHelperText }
+                    { noIsText }
+                    { registerButton }
+                </form>
+            </div>
+        );*/
+		
+		return (
+            <div>
                 <form onSubmit={this.onSubmit}>
                     <div className="mx_AuthBody_fieldRow">
                         {this.renderUsername()}

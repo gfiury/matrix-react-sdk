@@ -456,16 +456,25 @@ export default createReactClass({
         }
 
         let labelTopic;
-		let topicText;
+        let topicText;
+        let truncatedText;
 		if (this.props.room) {
             const ev = this.props.room.currentState.getStateEvents('m.room.topic', '');
             if (ev) {
                 topicText = ev.getContent().topic;
+
+                // Aprox Length
+                if (topicText.length > 35) {
+                    truncatedText = topicText.substring(0, 35);
+                }
+                else{
+                    truncatedText = topicText;
+                }
             }
         }
 			
 		if (topicText != undefined && topicText != null) {
-			labelTopic = <div className="mx_RoomHeader_topic" ref="topic" title={topicText} dir="auto">{ topicText }</div>;
+			labelTopic = <div className="mx_RoomHeader_topic" ref="topic" title={topicText} dir="auto">{ truncatedText }</div>;
 		}
 
         //var incomingCallBox;
