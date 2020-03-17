@@ -229,6 +229,7 @@ const LeftPanel = createReactClass({
         let tagPanelContainer;
 
         const isCustomTagsEnabled = SettingsStore.isFeatureEnabled("feature_custom_tags");
+        const isExploreEnabled = SettingsStore.isFeatureEnabled("feature_explore_rooms");
 
         if (tagPanelEnabled) {
             tagPanelContainer = (<div className="mx_LeftPanel_tagPanelContainer">
@@ -247,7 +248,7 @@ const LeftPanel = createReactClass({
         );
 
         let exploreButton;
-        if (!this.props.collapsed) {
+        if (!this.props.collapsed && isExploreEnabled) {
             exploreButton = (
                 <div className={classNames("mx_LeftPanel_explore", {"mx_LeftPanel_explore_hidden": this.state.searchExpanded})}>
                     <AccessibleButton onClick={() => dis.dispatch({action: 'view_room_directory'})}>{_t("Explore")}</AccessibleButton>
@@ -301,6 +302,7 @@ const LeftPanel = createReactClass({
                 <aside className="mx_LeftPanel dark-panel">
                     <CallPreview ConferenceHandler={VectorConferenceHandler} />
                     <div className="mx_LeftPanel_exploreAndFilterRow" onKeyDown={this._onKeyDown} onFocus={this._onFocus} onBlur={this._onBlur}>
+                        { exploreButton }
                         { searchBox }
                     </div>
                     <RoomList

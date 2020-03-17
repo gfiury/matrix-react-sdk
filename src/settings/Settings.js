@@ -110,6 +110,12 @@ export const SETTINGS = {
         supportedLevels: LEVELS_FEATURE,
         default: false,
     },
+    "feature_explore_rooms": {
+        isFeature: true,
+        displayName: _td("Shows the explore rooms button for the left panel"),
+        supportedLevels: LEVELS_FEATURE,
+        default: true,
+    },
     "feature_state_counters": {
         isFeature: true,
         displayName: _td("Render simple counters in room header"),

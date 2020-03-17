@@ -516,6 +516,14 @@ export default class InviteDialog extends React.PureComponent {
         this.setState({busy: true});
         const targetIds = this.state.targets.map(t => t.userId);
 
+        if (targetIds.length === 0) {
+            this.setState({
+                busy: false,
+                errorText: _t("Wirte the user and then select it from the list for Direct Message"),
+            });
+            return;
+        }
+        
         // Check if there is already a DM with these people and reuse it if possible.
         const existingRoom = DMRoomMap.shared().getDMRoomForIdentifiers(targetIds);
         if (existingRoom) {
@@ -578,6 +586,14 @@ export default class InviteDialog extends React.PureComponent {
     _inviteUsers = () => {
         this.setState({busy: true});
         const targetIds = this.state.targets.map(t => t.userId);
+
+        if (targetIds.length === 0) {
+            this.setState({
+                busy: false,
+                errorText: _t("Wirte the users and then select them from the list to create the room"),
+            });
+            return;
+        }
 
         const room = MatrixClientPeg.get().getRoom(this.props.roomId);
         if (!room) {
