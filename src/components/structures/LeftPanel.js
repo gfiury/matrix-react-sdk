@@ -229,7 +229,7 @@ const LeftPanel = createReactClass({
         let tagPanelContainer;
 
         const isCustomTagsEnabled = SettingsStore.isFeatureEnabled("feature_custom_tags");
-        const isExploreEnabled = SettingsStore.isFeatureEnabled("feature_explore_rooms");
+        const isExploreEnabled = SettingsStore.getValue("showExploreRooms");
 
         if (tagPanelEnabled) {
             tagPanelContainer = (<div className="mx_LeftPanel_tagPanelContainer">

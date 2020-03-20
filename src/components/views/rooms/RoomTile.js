@@ -473,7 +473,7 @@ export default createReactClass({
             }
         }
 			
-		if (topicText != undefined && topicText != null) {
+		if (topicText != undefined && topicText != null && !this.props.collapsed) {
 			labelTopic = <div className="mx_RoomHeader_topic" ref="topic" title={topicText} dir="auto">{ truncatedText }</div>;
 		}
 

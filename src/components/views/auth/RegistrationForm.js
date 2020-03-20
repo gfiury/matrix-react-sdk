@@ -28,8 +28,11 @@ import { _t } from '../../../languageHandler';
 import SdkConfig from '../../../SdkConfig';
 import { SAFE_LOCALPART_REGEX } from '../../../Registration';
 import withValidation from '../elements/Validation';
-import {ValidatedServerConfig} from "../../../utils/AutoDiscoveryUtils";
+import { ValidatedServerConfig } from "../../../utils/AutoDiscoveryUtils";
 
+const FIELD_NAME = 'field_name';
+const FIELD_LASTNAME = 'field_lastname';
+const FIELD_BIRTHDAY = 'field_birthday';
 const FIELD_EMAIL = 'field_email';
 const FIELD_PHONE_NUMBER = 'field_phone_number';
 const FIELD_USERNAME = 'field_username';
@@ -59,19 +62,23 @@ export default createReactClass({
         serverRequiresIdServer: PropTypes.bool,
     },
 
-    getDefaultProps: function() {
+    getDefaultProps: function () {
         return {
             onValidationChange: console.error,
             canSubmit: true,
         };
     },
 
-    getInitialState: function() {
+    getInitialState: function () {
         return {
             // Field error codes by field ID
             fieldValid: {},
             // The ISO2 country code selected in the phone number entry
             phoneCountry: this.props.defaultPhoneCountry,
+            name: '',
+            lastname: '',
+            gender: 0,
+            birthday: new Date(),
             username: this.props.defaultUsername || "",
             email: this.props.defaultEmail || "",
             phoneNumber: this.props.defaultPhoneNumber || "",
@@ -82,7 +89,7 @@ export default createReactClass({
         };
     },
 
-    onSubmit: async function(ev) {
+    onSubmit: async function (ev) {
         ev.preventDefault();
 
         if (!this.props.canSubmit) return;
@@ -114,7 +121,7 @@ export default createReactClass({
                 title: _t("Warning!"),
                 description: desc,
                 button: _t("Continue"),
-                onFinished: function(confirmed) {
+                onFinished: function (confirmed) {
                     if (confirmed) {
                         self._doSubmit(ev);
                     }
@@ -125,9 +132,13 @@ export default createReactClass({
         }
     },
 
-    _doSubmit: function(ev) {
+    _doSubmit: function (ev) {
         const email = this.state.email.trim();
         const promise = this.props.onRegisterClick({
+            name: this.state.name,
+            lastname: this.state.lastname,
+            gender: this.state.gender,
+            birthday: this.state.birthday,
             username: this.state.username.trim(),
             password: this.state.password.trim(),
             email: email,
@@ -137,7 +148,7 @@ export default createReactClass({
 
         if (promise) {
             ev.target.disabled = true;
-            promise.finally(function() {
+            promise.finally(function () {
                 ev.target.disabled = false;
             });
         }
@@ -152,6 +163,9 @@ export default createReactClass({
         }
 
         const fieldIDsInDisplayOrder = [
+            FIELD_NAME,
+            FIELD_LASTNAME,
+            FIELD_BIRTHDAY,
             FIELD_USERNAME,
             FIELD_PASSWORD,
             FIELD_PASSWORD_CONFIRM,
@@ -197,7 +211,7 @@ export default createReactClass({
     /**
      * @returns {boolean} true if all fields were valid last time they were validated.
      */
-    allFieldsValid: function() {
+    allFieldsValid: function () {
         const keys = Object.keys(this.state.fieldValid);
         for (let i = 0; i < keys.length; ++i) {
             if (!this.state.fieldValid[keys[i]]) {
@@ -216,7 +230,7 @@ export default createReactClass({
         return null;
     },
 
-    markFieldValid: function(fieldID, valid) {
+    markFieldValid: function (fieldID, valid) {
         const { fieldValid } = this.state;
         fieldValid[fieldID] = valid;
         this.setState({
@@ -241,7 +255,7 @@ export default createReactClass({
         rules: [
             {
                 key: "required",
-                test: function({ value, allowEmpty }) {
+                test: function ({ value, allowEmpty }) {
                     return allowEmpty || !this._authStepIsRequired('m.login.email.identity') || !!value;
                 },
                 invalid: () => _t("Enter email address (required on this homeserver)"),
@@ -267,7 +281,7 @@ export default createReactClass({
     },
 
     validatePasswordRules: withValidation({
-        description: function() {
+        description: function () {
             const complexity = this.state.passwordComplexity;
             const score = complexity ? complexity.score : 0;
             return <progress
@@ -284,7 +298,7 @@ export default createReactClass({
             },
             {
                 key: "complexity",
-                test: async function({ value }) {
+                test: async function ({ value }) {
                     if (!value) {
                         return false;
                     }
@@ -298,7 +312,7 @@ export default createReactClass({
                     });
                     return allowUnsafe || safe;
                 },
-                valid: function() {
+                valid: function () {
                     // Unsafe passwords that are valid are only possible through a
                     // configuration flag. We'll print some helper text to signal
                     // to the user that their password is allowed, but unsafe.
@@ -307,7 +321,7 @@ export default createReactClass({
                     }
                     return _t("Nice, strong password!");
                 },
-                invalid: function() {
+                invalid: function () {
                     const complexity = this.state.passwordComplexity;
                     if (!complexity) {
                         return null;
@@ -340,12 +354,12 @@ export default createReactClass({
             },
             {
                 key: "match",
-                test: function({ value }) {
+                test: function ({ value }) {
                     return !value || value === this.state.password;
                 },
                 invalid: () => _t("Passwords don't match"),
             },
-         ],
+        ],
     }),
 
     onPhoneCountryChange(newVal) {
@@ -372,7 +386,7 @@ export default createReactClass({
         rules: [
             {
                 key: "required",
-                test: function({ value, allowEmpty }) {
+                test: function ({ value, allowEmpty }) {
                     return allowEmpty || !this._authStepIsRequired('m.login.msisdn') || !!value;
                 },
                 invalid: () => _t("Enter phone number (required on this homeserver)"),
@@ -389,6 +403,14 @@ export default createReactClass({
         this.setState({
             username: ev.target.value,
         });
+    },
+
+    handleChange(event) {
+        this.setState({ [event.target.name]: event.target.value });
+    },
+
+    handleBirthdayChange(date) {
+        this.setState({ birthday: date._d })
     },
 
     async onUsernameValidate(fieldState) {
@@ -549,7 +571,52 @@ export default createReactClass({
         />;
     },
 
-    render: function() {
+    renderName() {
+        const Field = sdk.getComponent('elements.Field');
+        return <Field
+            id="mx_RegistrationForm_username"
+            name="name"
+            ref={field => this[FIELD_NAME] = field}
+            type="text"
+            autoFocus={true}
+            label={_t("Name")}
+            value={this.state.name}
+            onChange={this.handleChange}
+            onValidate={this.onUsernameValidate}
+        />;
+    },
+
+    renderLastname() {
+        const Field = sdk.getComponent('elements.Field');
+        return <Field
+            id="mx_RegistrationForm_username"
+            name="lastname"
+            ref={field => this[FIELD_LASTNAME] = field}
+            type="text"
+            autoFocus={true}
+            label={_t("Lastname")}
+            value={this.state.lastname}
+            onChange={this.handleChange}
+            onValidate={this.onUsernameValidate}
+        />;
+    },
+
+    renderGender() {
+        const genders = [
+            { value: 0, description: "Female" },
+            { value: 1, description: "Men" },
+            { value: 2, description: "Other" },
+        ];
+        return <Field id="gender" name="gender" label={_t("Gender")} element="select"
+            value={this.state.gender} onChange={this.handleChange}
+        >
+            {genders().map(elem => (
+                <option value={elem.value}>{_t(elem.description)}</option>
+            ))}
+        </Field>
+    },
+
+    render: function () {
         let yourMatrixAccountText = _t('Create your Matrix account on %(serverName)s', {
             serverName: this.props.serverConfig.hsName,
         });
@@ -634,10 +701,21 @@ export default createReactClass({
                 </form>
             </div>
         );*/
-		
-		return (
+
+        const DatePickerInline = sdk.getComponent("eleia.DatePickerInline");
+
+        return (
             <div>
                 <form onSubmit={this.onSubmit}>
+                    <div className="mx_AuthBody_fieldRow">
+                        {this.renderName()}
+                        {this.renderLastname()}
+                    </div>
+                    <div className="mx_AuthBody_fieldRow">
+                        {this.renderGender()}
+                        <DatePickerInline date={this.state.fromDate} 
+                            label={_t('Birthday')} handleDateChange={this.handleBirthdayChange} />
+                    </div>
                     <div className="mx_AuthBody_fieldRow">
                         {this.renderUsername()}
                     </div>
@@ -649,9 +727,9 @@ export default createReactClass({
                         {this.renderEmail()}
                         {this.renderPhoneNumber()}
                     </div>
-                    { emailHelperText }
-                    { noIsText }
-                    { registerButton }
+                    {emailHelperText}
+                    {noIsText}
+                    {registerButton}
                 </form>
             </div>
         );

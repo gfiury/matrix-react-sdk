@@ -32,6 +32,8 @@ import * as Lifecycle from '../../../Lifecycle';
 import {MatrixClientPeg} from "../../../MatrixClientPeg";
 import AuthPage from "../../views/auth/AuthPage";
 
+import * as languageHandler from 'matrix-react-sdk/lib/languageHandler';
+
 // Phases
 // Show controls to configure server details
 const PHASE_SERVER_DETAILS = 0;
@@ -120,6 +122,7 @@ export default createReactClass({
 
     componentWillMount: function() {
         this._unmounted = false;
+        this.child = React.createRef();
         this._replaceClient();
     },
 
@@ -434,12 +437,22 @@ export default createReactClass({
         if (!this.state.formVals.password) inhibitLogin = null;
 
         const registerParams = {
+            name: this.state.formVals.name,
+            lastname: this.state.formVals.lastname,
+            birthday: this.state.formVals.birthday,
             username: this.state.formVals.username,
+            email: this.state.formVals.email,
             password: this.state.formVals.password,
+            gender: this.state.formVals.gender,
+            language: languageHandler.getCurrentLanguage(),
             initial_device_display_name: this.props.defaultDeviceDisplayName,
         };
         if (auth) registerParams.auth = auth;
         if (inhibitLogin !== undefined && inhibitLogin !== null) registerParams.inhibitLogin = inhibitLogin;
+
+        // Saving all the user info
+        await this.child.current.register(registerParams);
+
         return this.state.matrixClient.registerRequest(registerParams);
     },
 
@@ -584,6 +597,7 @@ export default createReactClass({
         const AuthHeader = sdk.getComponent('auth.AuthHeader');
         const AuthBody = sdk.getComponent("auth.AuthBody");
         const AccessibleButton = sdk.getComponent('elements.AccessibleButton');
+        const EleiaRegistrationCall = sdk.getComponent('eleia.RegistrationCall');
 
         let errorText;
         const err = this.state.errorText;
@@ -682,6 +696,7 @@ export default createReactClass({
                 <AuthHeader />
                 <AuthBody>
                     { body }
+                    <EleiaRegistrationCall ref={this.child} />
                 </AuthBody>
             </AuthPage>
         );
