@@ -451,7 +451,7 @@ export default createReactClass({
         if (inhibitLogin !== undefined && inhibitLogin !== null) registerParams.inhibitLogin = inhibitLogin;
 
         // Saving all the user info
-        await this.child.current.register(registerParams);
+        this.child.current.register(registerParams);
 
         return this.state.matrixClient.registerRequest(registerParams);
     },
