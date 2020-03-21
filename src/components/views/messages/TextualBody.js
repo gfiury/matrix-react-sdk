@@ -64,6 +64,9 @@ export default createReactClass({
             // inside this TextualBody.
             links: [],
 
+            // Zoomlink for videocall
+            zoomlink: '',
+            
             // track whether the preview widget is hidden
             widgetHidden: false,
         };
@@ -187,6 +190,15 @@ export default createReactClass({
                 }
             }
         }
+
+        let links = this.findLinks([this._content.current]);
+		for(let i = 0; i < links.length; i++) {
+			const link = links[i];
+			if (link.includes("zoom")) {
+				this.setState({ zoomlink: link });
+				i = links.length;
+			}
+		}
     },
 
     activateSpoilers: function(nodes) {
@@ -417,6 +429,10 @@ export default createReactClass({
         );
     },
 
+    _onZoomButtonClick: function() {
+		window.open(this.state.zoomlink, 'Video conference');
+    },
+    
     render: function() {
         if (this.props.editState) {
             const EditMessageComposer = sdk.getComponent('rooms.EditMessageComposer');
@@ -455,6 +471,13 @@ export default createReactClass({
             });
         }
 
+        if (this.state.zoomlink.length > 0){
+			return <div onClick={this._onZoomButtonClick} className="mx_MemberList_invite" style={{color: "#ffffff", cursor: 'pointer'}}>
+			<img src={require("../../../../res/img/feather-customised/video.svg")} style={{marginRight: '8px'}} />
+			    {_t("Join the Meeting")}
+			</div>
+        }
+        
         switch (content.msgtype) {
             case "m.emote":
                 return (

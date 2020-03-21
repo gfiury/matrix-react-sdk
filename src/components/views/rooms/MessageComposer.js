@@ -59,26 +59,6 @@ CallButton.propTypes = {
     roomId: PropTypes.string.isRequired,
 };
 
-function VideoCallButton(props) {
-    const AccessibleButton = sdk.getComponent('elements.AccessibleButton');
-    const onCallClick = (ev) => {
-        dis.dispatch({
-            action: 'place_call',
-            type: ev.shiftKey ? "screensharing" : "video",
-            room_id: props.roomId,
-        });
-    };
-
-    return <AccessibleButton className="mx_MessageComposer_button mx_MessageComposer_videocall"
-        onClick={onCallClick}
-        title={_t('Video call')}
-    />;
-}
-
-VideoCallButton.propTypes = {
-    roomId: PropTypes.string.isRequired,
-};
-
 function HangupButton(props) {
     const AccessibleButton = sdk.getComponent('elements.AccessibleButton');
     const onHangupClick = () => {
@@ -162,6 +142,71 @@ class UploadButton extends React.Component {
                 />
             </AccessibleButton>
         );
+    }
+}
+
+class VideoCallButton extends React.Component {
+    static propTypes = {
+        roomId: PropTypes.string.isRequired,
+    }
+
+    constructor(props) {
+        super(props);
+		
+		this.child = React.createRef();
+		this.onCallClick = this.onCallClick.bind(this);
+    }
+	
+	onCallClick(ev) {
+
+            const client = MatrixClientPeg.get();
+
+
+            client.getThreePids().then((addresses) => {
+                var emails = addresses.threepids.filter((a) => a.medium === 'email');
+				console.log("EMAILS", emails);
+				console.log("CURRENT CHILD", this.child.current);
+                this.child.current.zoomCall(emails[0].address).then(
+                    result => {
+                        console.log("ZOOM URL", result.data);
+                        console.log("ROOM ID", this.props.roomId);
+
+                        var body = {
+                            body: "Join the meeting " + result.data,
+                            msgtype: "m.text"
+                        }
+
+                        client.sendMessage(this.props.roomId, body);
+                    }
+                )
+                    .catch(error => {
+						console.log("ERROR ZOOM", error);
+                        dis.dispatch({
+                            action: 'place_call',
+                            type: ev.shiftKey ? "screensharing" : "video",
+                            room_id: this.props.roomId,
+                        });
+                    })
+            })
+                .catch(error => {
+                    dis.dispatch({
+                        action: 'place_call',
+                        type: ev.shiftKey ? "screensharing" : "video",
+                        room_id: this.props.roomId,
+                    });
+                });
+        };
+
+    render() {
+		const AccessibleButton = sdk.getComponent('elements.AccessibleButton');
+        const ZoomController = sdk.getComponent('eleia.videocall.ZoomController');
+		
+        return <AccessibleButton className="mx_MessageComposer_button mx_MessageComposer_videocall"
+            onClick={this.onCallClick}
+            title={_t('Video call')}
+        >
+            <ZoomController ref={this.child} />
+        </AccessibleButton>;
     }
 }
 

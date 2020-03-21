@@ -405,6 +405,38 @@ export default createReactClass({
         });
     },
 
+    validateNameRules: withValidation({
+        rules: [
+            {
+                key: "required",
+                test: ({ value, allowEmpty }) => allowEmpty || !!value,
+                invalid: () => _t("Enter Name"),
+            },
+        ],
+    }),
+
+    async onNameValidate(fieldState) {
+        const result = await this.validateNameRules(fieldState);
+        this.markFieldValid(FIELD_NAME, result.valid);
+        return result;
+    },
+
+    validateLastnameRules: withValidation({
+        rules: [
+            {
+                key: "required",
+                test: ({ value, allowEmpty }) => allowEmpty || !!value,
+                invalid: () => _t("Enter Lastname"),
+            },
+        ],
+    }),
+
+    async onLastnameValidate(fieldState) {
+        const result = await this.validateLastnameRules(fieldState);
+        this.markFieldValid(FIELD_LASTNAME, result.valid);
+        return result;
+    },
+
     handleChange(event) {
         this.setState({ [event.target.name]: event.target.value });
     },
@@ -563,7 +595,6 @@ export default createReactClass({
             id="mx_RegistrationForm_username"
             ref={field => this[FIELD_USERNAME] = field}
             type="text"
-            autoFocus={true}
             label={_t("Username")}
             value={this.state.username}
             onChange={this.onUsernameChange}
@@ -582,7 +613,7 @@ export default createReactClass({
             label={_t("Name")}
             value={this.state.name}
             onChange={this.handleChange}
-            onValidate={this.onUsernameValidate}
+            onValidate={this.onNameValidate}
         />;
     },
 
@@ -593,11 +624,10 @@ export default createReactClass({
             name="lastname"
             ref={field => this[FIELD_LASTNAME] = field}
             type="text"
-            autoFocus={true}
             label={_t("Lastname")}
             value={this.state.lastname}
             onChange={this.handleChange}
-            onValidate={this.onUsernameValidate}
+            onValidate={this.onLastnameValidate}
         />;
     },
 
@@ -607,10 +637,11 @@ export default createReactClass({
             { value: 1, description: "Men" },
             { value: 2, description: "Other" },
         ];
+        const Field = sdk.getComponent('elements.Field');
         return <Field id="gender" name="gender" label={_t("Gender")} element="select"
             value={this.state.gender} onChange={this.handleChange}
         >
-            {genders().map(elem => (
+            {genders.map(elem => (
                 <option value={elem.value}>{_t(elem.description)}</option>
             ))}
         </Field>
@@ -711,9 +742,9 @@ export default createReactClass({
                         {this.renderName()}
                         {this.renderLastname()}
                     </div>
-                    <div className="mx_AuthBody_fieldRow">
+                    <div className="mx_AuthBody_fieldRow" style={{height: '48px'}}>
                         {this.renderGender()}
-                        <DatePickerInline date={this.state.fromDate} 
+                        <DatePickerInline maxWidth='180px' date={this.state.fromDate} 
                             label={_t('Birthday')} handleDateChange={this.handleBirthdayChange} />
                     </div>
                     <div className="mx_AuthBody_fieldRow">

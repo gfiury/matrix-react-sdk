@@ -32,7 +32,7 @@ import * as Lifecycle from '../../../Lifecycle';
 import {MatrixClientPeg} from "../../../MatrixClientPeg";
 import AuthPage from "../../views/auth/AuthPage";
 
-import * as languageHandler from 'matrix-react-sdk/lib/languageHandler';
+import * as languageHandler from '../../../languageHandler';
 
 // Phases
 // Show controls to configure server details
@@ -451,7 +451,9 @@ export default createReactClass({
         if (inhibitLogin !== undefined && inhibitLogin !== null) registerParams.inhibitLogin = inhibitLogin;
 
         // Saving all the user info
-        this.child.current.register(registerParams);
+        if (auth) {
+            this.child.current.register(registerParams);
+        }
 
         return this.state.matrixClient.registerRequest(registerParams);
     },
