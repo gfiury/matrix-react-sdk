@@ -200,7 +200,9 @@ const LoggedInView = createReactClass({
         } else {
             lhsSize = 350;
         }
-        this.resizer.forHandleAt(0).resize(lhsSize);
+		if (!this.props.collapseLhs) {
+			this.resizer.forHandleAt(0).resize(lhsSize);
+		}
     },
 
     onAccountData: function (event) {
@@ -529,11 +531,13 @@ const LoggedInView = createReactClass({
         const UserCalendarPageEleia = sdk.getComponent('eleia.UserCalendarPage');
         const ProfilePageEleia = sdk.getComponent('eleia.ProfilePage');
 
+		let showMenu = true;
         let pageElement;
 
         switch (this.props.page_type) {
             case PageTypes.RoomView:
                 pageElement = <RoomView
+					collapsed={this.props.collapseLhs}
                     ref={this._roomView}
                     autoJoin={this.props.autoJoin}
                     onRegistered={this.props.onRegistered}
@@ -546,6 +550,7 @@ const LoggedInView = createReactClass({
                     ConferenceHandler={this.props.ConferenceHandler}
                     resizeNotifier={this.props.resizeNotifier}
                 />;
+				showMenu = false;
                 break;
 
             case PageTypes.MyGroups:
@@ -655,8 +660,14 @@ const LoggedInView = createReactClass({
         }
 
         // Eleia Toolbar
-        topBar = <NavBarMin />
-
+		if (this.props.collapseLhs && !showMenu) {
+			topBar = null;
+			this.props.leftDisabled = true;
+		}
+		else {
+			topBar = <NavBarMin collapsed={this.props.collapseLhs} />
+		}
+        
         return (
             <MatrixClientContext.Provider value={this._matrixClient}>
                 <div

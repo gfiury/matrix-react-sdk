@@ -346,8 +346,14 @@ export default class MessageComposer extends React.Component {
     }
 
     render() {
-        const controls = [
+        /*const controls = [
             this.state.me ? <ComposerAvatar key="controls_avatar" me={this.state.me} /> : null,
+            this.props.e2eStatus ?
+                <E2EIcon key="e2eIcon" status={this.props.e2eStatus} className="mx_MessageComposer_e2eIcon" /> :
+                null,
+        ];*/
+
+        const controls = [
             this.props.e2eStatus ?
                 <E2EIcon key="e2eIcon" status={this.props.e2eStatus} className="mx_MessageComposer_e2eIcon" /> :
                 null,

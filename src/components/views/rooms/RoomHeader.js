@@ -152,6 +152,7 @@ export default createReactClass({
 
     render: function() {
         const RoomAvatar = sdk.getComponent("avatars.RoomAvatar");
+        const EleiaBar = sdk.getComponent("eleia.NavBarMin");
 
         let searchStatus = null;
         let cancelButton = null;
@@ -320,9 +321,15 @@ export default createReactClass({
                 { searchButton }
             </div>;
 
+        let menu = null;
+        if (this.props.collapsed) {
+            menu = <EleiaBar collapsed={true} />
+        }
+
         return (
             <div className="mx_RoomHeader light-panel">
                 <div className="mx_RoomHeader_wrapper">
+                    { menu }
                     <div className="mx_RoomHeader_avatar">{ roomAvatar }{ e2eIcon }</div>
                     { privateIcon }
                     { name }

@@ -2018,6 +2018,7 @@ export default createReactClass({
                 <main className={"mx_RoomView" + (inCall ? " mx_RoomView_inCall" : "")} style={{transform: this.state.openDisclaimer ? "translateZ(0)" : 'inherit'}} ref={this._roomView}>
                     <ErrorBoundary>
                         <RoomHeader
+                            collapsed={this.props.collapsed}
                             room={this.state.room}
                             searchInfo={searchInfo}
                             oobData={this.props.oobData}
