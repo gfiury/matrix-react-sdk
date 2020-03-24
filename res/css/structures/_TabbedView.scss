@@ -17,7 +17,7 @@ limitations under the License.
 
 .mx_TabbedView {
     margin: 0;
-    padding: 0 0 0 58px;
+    padding: 0 0 0 20px;
     display: flex;
     flex-direction: column;
     position: absolute;
@@ -28,10 +28,10 @@ limitations under the License.
 }
 
 .mx_TabbedView_tabLabels {
-    width: 170px;
-    max-width: 170px;
+    width: 300px;
+    max-width: 300px;
     color: $tab-label-fg-color;
-    position: fixed;
+    display: flex;
 }
 
 .mx_TabbedView_tabLabel {
@@ -43,6 +43,8 @@ limitations under the License.
     min-height: 24px; // use min-height instead of height to allow the label to overflow a bit
     margin-bottom: 6px;
     position: relative;
+    width: 150px;
+    display: flex;
 }
 
 .mx_TabbedView_tabLabel_active {
@@ -80,15 +82,16 @@ limitations under the License.
 }
 
 .mx_TabbedView_tabPanel {
-    margin-left: 240px; // 170px sidebar + 70px padding
     flex-grow: 1;
     display: flex;
     flex-direction: column;
     min-height: 0; // firefox
+    align-items: center;
 }
 
 .mx_TabbedView_tabPanelContent {
     flex-grow: 1;
     overflow: auto;
     min-height: 0; // firefox
+    max-width: 480px;
 }

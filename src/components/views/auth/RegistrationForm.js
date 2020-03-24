@@ -744,7 +744,7 @@ export default createReactClass({
                     </div>
                     <div className="mx_AuthBody_fieldRow" style={{height: '48px'}}>
                         {this.renderGender()}
-                        <DatePickerInline maxWidth='180px' date={this.state.fromDate} 
+                        <DatePickerInline maxWidth='180px' date={this.state.fromDate} disableMinDate={true}
                             label={_t('Birthday')} handleDateChange={this.handleBirthdayChange} />
                     </div>
                     <div className="mx_AuthBody_fieldRow">

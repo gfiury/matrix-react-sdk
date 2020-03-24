@@ -723,7 +723,8 @@ export default createReactClass({
                 tagName: "im.vector.fake.direct",
                 order: "recent",
                 incomingCall: incomingCallIfTaggedAs('im.vector.fake.direct'),
-                onAddRoom: () => {dis.dispatch({action: 'view_create_chat'});},
+                onAddRoom: () => {dis.dispatch({action: 'view_create_chat'});
+                                  this.props.closeMenu();},
                 addRoomLabel: _t("Start chat"),
             },
             {
@@ -731,7 +732,8 @@ export default createReactClass({
                 label: _t('Rooms'),
                 order: "recent",
                 incomingCall: incomingCallIfTaggedAs('im.vector.fake.recent'),
-                onAddRoom: () => {dis.dispatch({action: 'view_create_room'});},
+                onAddRoom: () => {dis.dispatch({action: 'view_create_room'});
+                                  this.props.closeMenu();},
             },
         ];
         const tagSubLists = Object.keys(this.state.lists)

@@ -1421,5 +1421,6 @@
     "⚠ These settings are meant for advanced users.": "⚠ Estas opciones son indicadas para usuarios avanzados.",
     "Personal ban list": "Lista de bans personal",
     "Server or user ID to ignore": "Servidor o ID de usuario a ignorar",
-    "eg: @bot:* or example.org": "p. ej.: @bot:* o ejemplo.org"
+    "eg: @bot:* or example.org": "p. ej.: @bot:* o ejemplo.org",
+    "Join the Meeting": "Unirse a la Videoconferencia"
 }

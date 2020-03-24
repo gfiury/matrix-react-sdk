@@ -87,6 +87,7 @@ const LoggedInView = createReactClass({
         };
     },
 
+    
     componentDidMount: function () {
         this.resizer = this._createResizer();
         this.resizer.attach();
@@ -96,6 +97,8 @@ const LoggedInView = createReactClass({
     componentWillMount: function () {
         // stash the MatrixClient in case we log out before we are unmounted
         this._matrixClient = this.props.matrixClient;
+		
+		this.props.collapseLhs = (window.innerWidth <= 760);
 
         CallMediaHandler.loadDevices();
 
