@@ -548,6 +548,7 @@ export default createReactClass({
         const InteractiveAuth = sdk.getComponent('structures.InteractiveAuth');
         const Spinner = sdk.getComponent('elements.Spinner');
         const RegistrationForm = sdk.getComponent('auth.RegistrationForm');
+		const RegistrationPageEleia = sdk.getComponent('eleia.RegistrationPage');
 
         if (this.state.matrixClient && this.state.doingUIAuth) {
             return <InteractiveAuth
@@ -579,7 +580,8 @@ export default createReactClass({
                 onEditServerDetailsClick = this.onEditServerDetailsClick;
             }
 
-            return <RegistrationForm
+			return <RegistrationPageEleia matrixClient={this.state.matrixClient} makeRegistrationUrl={this.props.makeRegistrationUrl}/>;
+            /*return <RegistrationForm
                 defaultUsername={this.state.formVals.username}
                 defaultEmail={this.state.formVals.email}
                 defaultPhoneCountry={this.state.formVals.phoneCountry}
@@ -591,7 +593,7 @@ export default createReactClass({
                 serverConfig={this.props.serverConfig}
                 canSubmit={!this.state.serverErrorIsFatal}
                 serverRequiresIdServer={this.state.serverRequiresIdServer}
-            />;
+            />;*/
         }
     },
 

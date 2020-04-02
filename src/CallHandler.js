@@ -1,57 +1,3 @@
-/*
-Copyright 2015, 2016 OpenMarket Ltd
-Copyright 2017, 2018 New Vector Ltd
-Copyright 2019 The Matrix.org Foundation C.I.C.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
-/*
- * Manages a list of all the currently active calls.
- *
- * This handler dispatches when voip calls are added/updated/removed from this list:
- * {
- *   action: 'call_state'
- *   room_id: <room ID of the call>
- * }
- *
- * To know the state of the call, this handler exposes a getter to
- * obtain the call for a room:
- *   var call = CallHandler.getCall(roomId)
- *   var state = call.call_state; // ringing|ringback|connected|ended|busy|stop_ringback|stop_ringing
- *
- * This handler listens for and handles the following actions:
- * {
- *   action: 'place_call',
- *   type: 'voice|video',
- *   room_id: <room that the place call button was pressed in>
- * }
- *
- * {
- *   action: 'incoming_call'
- *   call: MatrixCall
- * }
- *
- * {
- *   action: 'hangup'
- *   room_id: <room that the hangup button was pressed in>
- * }
- *
- * {
- *   action: 'answer'
- *   room_id: <room that the answer button was pressed in>
- * }
- */
 
 import {MatrixClientPeg} from './MatrixClientPeg';
 import PlatformPeg from './PlatformPeg';
@@ -358,6 +304,8 @@ function _onAction(payload) {
                     dis.dispatch({
                         action: "place_conference_call",
                         room_id: payload.room_id,
+                        email: payload.email,
+						zoom_url: payload.zoom_url,
                         type: payload.type,
                         remote_element: payload.remote_element,
                         local_element: payload.local_element,
@@ -367,7 +315,7 @@ function _onAction(payload) {
             break;
         case 'place_conference_call':
             console.info("Place conference call in %s", payload.room_id);
-            _startCallApp(payload.room_id, payload.type);
+            _startCallApp(payload.room_id, payload.type, payload.email, payload.zoom_url);
             break;
         case 'incoming_call':
             {
@@ -410,7 +358,7 @@ function _onAction(payload) {
     }
 }
 
-async function _startCallApp(roomId, type) {
+async function _startCallApp(roomId, type, email ,zoom_url) {
     // check for a working integration manager. Technically we could put
     // the state event in anyway, but the resulting widget would then not
     // work for us. Better that the user knows before everyone else in the
@@ -476,14 +424,22 @@ async function _startCallApp(roomId, type) {
     // the event. It's just a random string to make the Jitsi URLs unique.
     const widgetSessionId = Math.random().toString(36).substring(2);
     const confId = room.roomId.replace(/[^A-Za-z0-9]/g, '') + widgetSessionId;
+	
+	let conferenceId = encodeURIComponent(confId);
+	if (zoom_url != undefined){
+		var spliturl = zoom_url.split("/");
+        conferenceId = spliturl[spliturl.length - 1];
+	}
+	
     // NB. we can't just encodeURICompoent all of these because the $ signs need to be there
     // (but currently the only thing that needs encoding is the confId)
     const queryString = [
-        'confId='+encodeURIComponent(confId),
+        'confId='+conferenceId,
         'isAudioConf='+(type === 'voice' ? 'true' : 'false'),
         'displayName=$matrix_display_name',
         'avatarUrl=$matrix_avatar_url',
-        'email=$matrix_user_id',
+        'email='+email,
+        'role=$matrix_role'
     ].join('&');
 
     let widgetUrl;
@@ -505,8 +461,8 @@ async function _startCallApp(roomId, type) {
         Date.now()
     );
 
-    WidgetUtils.setRoomWidget(roomId, widgetId, 'jitsi', widgetUrl, 'Jitsi', widgetData).then(() => {
-        console.log('Jitsi widget added');
+    WidgetUtils.setRoomWidget(roomId, widgetId, 'jitsi', widgetUrl, _t('Video Conference'), widgetData).then(() => {
+        console.log('Video Conference widget added');
     }).catch((e) => {
         if (e.errcode === 'M_FORBIDDEN') {
             const ErrorDialog = sdk.getComponent("dialogs.ErrorDialog");

@@ -1422,5 +1422,21 @@
     "Personal ban list": "Lista de bans personal",
     "Server or user ID to ignore": "Servidor o ID de usuario a ignorar",
     "eg: @bot:* or example.org": "p. ej.: @bot:* o ejemplo.org",
-    "Join the Meeting": "Unirse a la Videoconferencia"
+    "Join the Meeting": "Unirse a la Videoconferencia",
+    "Sign in instead": "Iniciar sesion",
+    "Not sure of your password? <a>Set a new one</a>": "Olvido la contraseña? <a>Ingrese una nueva</a>",
+    "Create account": "Registrarse",
+    "Set a new password": "Ingresar una nueva contraseña",
+    "Confirm": "Confirmar",
+    "A verification email will be sent to your inbox to confirm setting your new password.": "Un mail de verificacion sera enviado para confirmar la nueva contraseña.",
+    "Explore": "Explorar",
+	"Explore rooms": "Explorar salas",
+	"Filter": "Filtrar",
+    "Filter rooms…": "Filtrar salas",
+    "Find a room… (e.g. %(exampleRoom)s)": "Encontrar sala... (e.j. %(exampleRoom)s)",
+    "If you can't find the room you're looking for, ask for an invite or <a>Create a new room</a>.": "Si no puedes encontrar la sala que buscas, solicita una invitacion o <a>Crea una sala nueva</a>.",
+    "View": "Ver",
+    "Direct Messages": "Mensajes Directos",
+    "Enable encryption?": "Esta seguro que desea habilitar la encriptacion?",
+    "Once enabled, encryption for a room cannot be disabled. Messages sent in an encrypted room cannot be seen by the server, only by the participants of the room. Enabling encryption may prevent many bots and bridges from working correctly. <a>Learn more about encryption.</a>": "Una vez habilitada la encriptacion de una sala, esta no se puede deshabilitar. Los mensajes enviados en una sala encriptada no se pueden leer en el servidor, solamente los participantes de la sala. <a></a>"
 }

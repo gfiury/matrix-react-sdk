@@ -206,13 +206,22 @@ export default createReactClass({
             spinner = <Loader />;
         }
 
-        return (
+        /*return (
             <div className={'mx_AppsDrawer' + (this.props.hide ? ' mx_AppsDrawer_hidden' : '')}>
                 <div id='apps' className='mx_AppsContainer'>
                     { apps }
                     { spinner }
                 </div>
                 { this._canUserModify() && addWidget }
+            </div>
+        );*/
+
+        return (
+            <div className={'mx_AppsDrawer' + (this.props.hide ? ' mx_AppsDrawer_hidden' : '')}>
+                <div id='apps' className='mx_AppsContainer'>
+                    { apps }
+                    { spinner }
+                </div>
             </div>
         );
     },

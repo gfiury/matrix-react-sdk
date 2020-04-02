@@ -533,10 +533,17 @@ const LoggedInView = createReactClass({
         const ManageMedicEventPageEleia = sdk.getComponent('eleia.ManageMedicEventPage');
         const UserCalendarPageEleia = sdk.getComponent('eleia.UserCalendarPage');
         const ProfilePageEleia = sdk.getComponent('eleia.ProfilePage');
+        const ProfessionalFormPageEleia = sdk.getComponent('eleia.ProfessionalFormPage');
 
 		let showMenu = true;
         let pageElement;
+		let navBar = null;
 
+		// Eleia Toolbar
+		if (this.props.collapseLhs) {
+			navBar = <NavBarMin collapsed={this.props.collapseLhs} />
+		}
+		
         switch (this.props.page_type) {
             case PageTypes.RoomView:
                 pageElement = <RoomView
@@ -586,19 +593,19 @@ const LoggedInView = createReactClass({
                 break;
 
             case PageTypes.AppointmentPage:
-                pageElement = <AppointmentPageEleia />;
+                pageElement = <AppointmentPageEleia navBar={navBar} />;
                 break;
 
             case PageTypes.ListAppointmentsPage:
-                pageElement = <ListAppointmentPageEleia />;
+                pageElement = <ListAppointmentPageEleia navBar={navBar} />;
                 break;
 
             case PageTypes.MedicSchedulePage:
-                pageElement = <MedicEventPageEleia />;
+                pageElement = <MedicEventPageEleia navBar={navBar} />;
                 break;
 
             case PageTypes.ManageSchedulePage:
-                pageElement = <ManageMedicEventPageEleia />;
+                pageElement = <ManageMedicEventPageEleia navBar={navBar} />;
                 break;
 
             case PageTypes.EducationSchedulePage:
@@ -610,12 +617,14 @@ const LoggedInView = createReactClass({
                 break;
 
             case PageTypes.UserCalendarPage:
-                pageElement = <UserCalendarPageEleia />;
+                pageElement = <UserCalendarPageEleia navBar={navBar} />;
                 break;
 
             case PageTypes.ProfilePage:
-                pageElement = <ProfilePageEleia />;
+                pageElement = <ProfilePageEleia navBar={navBar} />;
                 break;
+             case PageTypes.ProfessionalFormPage:
+                pageElement = <ProfessionalFormPageEleia open={true}/>;
                 break;
         }
 
@@ -663,12 +672,12 @@ const LoggedInView = createReactClass({
         }
 
         // Eleia Toolbar
-		if (this.props.collapseLhs && !showMenu) {
-			topBar = null;
-			this.props.leftDisabled = true;
+		if (!this.props.collapseLhs) {
+			topBar = <NavBarMin collapsed={this.props.collapseLhs} />
 		}
 		else {
-			topBar = <NavBarMin collapsed={this.props.collapseLhs} />
+			topBar = null;
+			this.props.leftDisabled = true;
 		}
         
         return (

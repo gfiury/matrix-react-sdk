@@ -680,7 +680,7 @@ export default createReactClass({
         );
 
         let emailHelperText = null;
-        if (this._showEmail()) {
+        /*if (this._showEmail()) {
             if (this._showPhoneNumber()) {
                 emailHelperText = <div>
                     {_t(
@@ -696,7 +696,7 @@ export default createReactClass({
                     )}
                 </div>;
             }
-        }
+        }*/
         const haveIs = Boolean(this.props.serverConfig.isUrl);
         let noIsText = null;
         if (this.props.serverRequiresIdServer && !haveIs) {
@@ -744,8 +744,8 @@ export default createReactClass({
                     </div>
                     <div className="mx_AuthBody_fieldRow" style={{height: '48px'}}>
                         {this.renderGender()}
-                        <DatePickerInline maxWidth='180px' date={this.state.fromDate} disableMinDate={true}
-                            label={_t('Birthday')} handleDateChange={this.handleBirthdayChange} />
+                        <DatePickerInline maxWidth='180px' date={this.state.birthday} 
+                            label={_t('Birthday')} handleDateChange={this.handleBirthdayChange.bind(this)} disableMinDate={true} />
                     </div>
                     <div className="mx_AuthBody_fieldRow">
                         {this.renderUsername()}

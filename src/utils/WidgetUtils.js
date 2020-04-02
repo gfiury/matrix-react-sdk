@@ -403,11 +403,19 @@ export default class WidgetUtils {
     static makeAppConfig(appId, app, senderUserId, roomId, eventId) {
         const myUserId = MatrixClientPeg.get().credentials.userId;
         const user = MatrixClientPeg.get().getUser(myUserId);
+        const splitApp = appId.split("_");
+        let role = 0;
+        // App Format: jitsi_user_id
+        if (splitApp.length > 1) {
+            // userid is the one that created the widget
+            role = splitApp[1] === myUserId ? 1 : 0;
+        }
         const params = {
             '$matrix_user_id': myUserId,
             '$matrix_room_id': roomId,
             '$matrix_display_name': user ? user.displayName : myUserId,
             '$matrix_avatar_url': user ? MatrixClientPeg.get().mxcUrlToHttp(user.avatarUrl) : '',
+            '$matrix_role': role,
 
             // TODO: Namespace themes through some standard
             '$theme': SettingsStore.getValue("theme"),

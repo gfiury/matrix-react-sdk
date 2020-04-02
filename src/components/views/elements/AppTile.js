@@ -715,11 +715,11 @@ export default class AppTile extends React.Component {
                     </span>
                     <span className="mx_AppTileMenuBarWidgets">
                         { /* Popout widget */ }
-                        { this.props.showPopout && <AccessibleButton
+                        { /*this.props.showPopout && <AccessibleButton
                             className="mx_AppTileMenuBar_iconButton mx_AppTileMenuBar_iconButton_popout"
                             title={_t('Popout widget')}
                             onClick={this._onPopoutWidgetClick}
-                        /> }
+                        />*/ }
                         { /* Context menu */ }
                         { <ContextMenuButton
                             className="mx_AppTileMenuBar_iconButton mx_AppTileMenuBar_iconButton_menu"

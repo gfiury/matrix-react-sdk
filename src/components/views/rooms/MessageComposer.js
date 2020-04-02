@@ -14,11 +14,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import React, {createRef} from 'react';
+import React, { createRef } from 'react';
 import PropTypes from 'prop-types';
 import { _t } from '../../../languageHandler';
 import CallHandler from '../../../CallHandler';
-import {MatrixClientPeg} from '../../../MatrixClientPeg';
+import { MatrixClientPeg } from '../../../MatrixClientPeg';
 import * as sdk from '../../../index';
 import dis from '../../../dispatcher';
 import RoomViewStore from '../../../stores/RoomViewStore';
@@ -27,6 +27,7 @@ import { makeRoomPermalink } from '../../../utils/permalinks/Permalinks';
 import ContentMessages from '../../../ContentMessages';
 import E2EIcon from './E2EIcon';
 import SettingsStore from "../../../settings/SettingsStore";
+import Modal from '../../../Modal';
 
 function ComposerAvatar(props) {
     const MemberStatusMessageAvatar = sdk.getComponent('avatars.MemberStatusMessageAvatar');
@@ -50,9 +51,9 @@ function CallButton(props) {
     };
 
     return (<AccessibleButton className="mx_MessageComposer_button mx_MessageComposer_voicecall"
-            onClick={onVoiceCallClick}
-            title={_t('Voice call')}
-        />);
+        onClick={onVoiceCallClick}
+        title={_t('Voice call')}
+    />);
 }
 
 CallButton.propTypes = {
@@ -74,9 +75,9 @@ function HangupButton(props) {
         });
     };
     return (<AccessibleButton className="mx_MessageComposer_button mx_MessageComposer_hangup"
-            onClick={onHangupClick}
-            title={_t('Hangup')}
-        />);
+        onClick={onHangupClick}
+        title={_t('Hangup')}
+    />);
 }
 
 HangupButton.propTypes = {
@@ -98,7 +99,7 @@ class UploadButton extends React.Component {
 
     onUploadClick(ev) {
         if (MatrixClientPeg.get().isGuest()) {
-            dis.dispatch({action: 'require_registration'});
+            dis.dispatch({ action: 'require_registration' });
             return;
         }
         this._uploadInput.current.click();
@@ -126,7 +127,7 @@ class UploadButton extends React.Component {
     }
 
     render() {
-        const uploadInputStyle = {display: 'none'};
+        const uploadInputStyle = { display: 'none' };
         const AccessibleButton = sdk.getComponent('elements.AccessibleButton');
         return (
             <AccessibleButton className="mx_MessageComposer_button mx_MessageComposer_upload"
@@ -152,55 +153,77 @@ class VideoCallButton extends React.Component {
 
     constructor(props) {
         super(props);
-		
-		this.child = React.createRef();
-		this.onCallClick = this.onCallClick.bind(this);
+
+        this.child = React.createRef();
+        this.onCallClick = this.onCallClick.bind(this);
     }
-	
-	onCallClick(ev) {
 
-            const client = MatrixClientPeg.get();
+    onCallClick(ev) {
 
+        const Loader = sdk.getComponent("elements.Spinner");
+        const modal = Modal.createDialog(Loader, null, 'mx_Dialog_spinner');
 
-            client.getThreePids().then((addresses) => {
-                var emails = addresses.threepids.filter((a) => a.medium === 'email');
-				console.log("EMAILS", emails);
-				console.log("CURRENT CHILD", this.child.current);
-                this.child.current.zoomCall(emails[0].address).then(
-                    result => {
-                        console.log("ZOOM URL", result.data);
-                        console.log("ROOM ID", this.props.roomId);
+        const client = MatrixClientPeg.get();
+        client.getThreePids().then((addresses) => {
+            var emails = addresses.threepids.filter((a) => a.medium === 'email');
+            console.log("EMAILS", emails);
+            console.log("CURRENT CHILD", this.child.current);
+            this.child.current.zoomCall(emails[0].address).then(
+                result => {
+                    modal.close();
 
-                        var body = {
-                            body: "Join the meeting " + result.data,
-                            msgtype: "m.text"
-                        }
+                    console.log("ZOOM URL", result.data);
+                    console.log("ROOM ID", this.props.roomId);
 
-                        client.sendMessage(this.props.roomId, body);
+                    var body = {
+                        body: "Join the meeting " + result.data,
+                        msgtype: "m.text"
                     }
-                )
-                    .catch(error => {
-						console.log("ERROR ZOOM", error);
-                        dis.dispatch({
-                            action: 'place_call',
-                            type: ev.shiftKey ? "screensharing" : "video",
-                            room_id: this.props.roomId,
-                        });
-                    })
-            })
-                .catch(error => {
+
+                    //client.sendMessage(this.props.roomId, body);
+
+                    
                     dis.dispatch({
                         action: 'place_call',
                         type: ev.shiftKey ? "screensharing" : "video",
                         room_id: this.props.roomId,
+                        zoom_url: result.data,
+                        email: emails[0].address
                     });
-                });
-        };
+                }
+            )
+                .catch(error => {
+                    console.log("ERROR ZOOM", error);
+                    modal.close();
+
+                    const ErrorDialog = sdk.getComponent("dialogs.ErrorDialog");
+
+                    Modal.createTrackedDialog(_t('Video Conference'), '', ErrorDialog, {
+                        title: _t('Permission Required'),
+                        description: _t("You do not have a listed email account to start video conferences"),
+                    });
+                    /*dis.dispatch({
+                        action: 'place_call',
+                        type: ev.shiftKey ? "screensharing" : "video",
+                        room_id: this.props.roomId,
+                    });*/
+                })
+        }).catch(error => {
+            modal.close();
+
+            const ErrorDialog = sdk.getComponent("dialogs.ErrorDialog");
+
+            Modal.createTrackedDialog(_t('Video Conference'), '', ErrorDialog, {
+                title: _t('Could not retrieve your user information'),
+                description: _t("Y"),
+            });
+        })
+    };
 
     render() {
-		const AccessibleButton = sdk.getComponent('elements.AccessibleButton');
+        const AccessibleButton = sdk.getComponent('elements.AccessibleButton');
         const ZoomController = sdk.getComponent('eleia.videocall.ZoomController');
-		
+
         return <AccessibleButton className="mx_MessageComposer_button mx_MessageComposer_videocall"
             onClick={this.onCallClick}
             title={_t('Video call')}
@@ -236,7 +259,7 @@ export default class MessageComposer extends React.Component {
         // if we have the member already, do that
         const me = this.props.room.getMember(MatrixClientPeg.get().getUserId());
         if (me) {
-            this.setState({me});
+            this.setState({ me });
             return;
         }
         // Otherwise, wait for member loading to finish and then update the member for the avatar.
@@ -244,7 +267,7 @@ export default class MessageComposer extends React.Component {
         // will return the promise for the existing operation
         this.props.room.loadMembersIfNeeded().then(() => {
             const me = this.props.room.getMember(MatrixClientPeg.get().getUserId());
-            this.setState({me});
+            this.setState({ me });
         });
     }
 
@@ -261,10 +284,10 @@ export default class MessageComposer extends React.Component {
         if (ev.getRoomId() !== this.props.room.roomId) return;
 
         if (ev.getType() === 'm.room.tombstone') {
-            this.setState({tombstone: this._getRoomTombstone()});
+            this.setState({ tombstone: this._getRoomTombstone() });
         }
         if (ev.getType() === 'm.room.power_levels') {
-            this.setState({canSendMessages: this.props.room.maySendMessage()});
+            this.setState({ canSendMessages: this.props.room.maySendMessage() });
         }
     }
 
@@ -281,7 +304,7 @@ export default class MessageComposer extends React.Component {
     onInputStateChanged(inputState) {
         // Merge the new input state with old to support partial updates
         inputState = Object.assign({}, this.state.inputState, inputState);
-        this.setState({inputState});
+        this.setState({ inputState });
     }
 
     _onTombstoneClick(ev) {
@@ -408,13 +431,13 @@ export default class MessageComposer extends React.Component {
                     <span className="mx_MessageComposer_roomReplaced_header">
                         {_t("This room has been replaced and is no longer active.")}
                     </span><br />
-                    { continuesLink }
+                    {continuesLink}
                 </div>
             </div>);
         } else {
             controls.push(
                 <div key="controls_error" className="mx_MessageComposer_noperm_error">
-                    { _t('You do not have permission to post to this room') }
+                    {_t('You do not have permission to post to this room')}
                 </div>,
             );
         }
@@ -423,7 +446,7 @@ export default class MessageComposer extends React.Component {
             <div className="mx_MessageComposer">
                 <div className="mx_MessageComposer_wrapper">
                     <div className="mx_MessageComposer_row">
-                        { controls }
+                        {controls}
                     </div>
                 </div>
             </div>

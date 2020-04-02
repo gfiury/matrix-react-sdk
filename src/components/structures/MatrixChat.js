@@ -753,6 +753,9 @@ export default createReactClass({
             case 'view_profile_page':
                 this._viewProfile();
                 break;
+            case 'view_professional_page':
+                this._viewProfessional();
+                break;
         }
     },
 
@@ -1004,6 +1007,15 @@ export default createReactClass({
         });
         this._setPage(PageTypes.ProfilePage);
         this.notifyNewScreen('profile');
+    },
+
+    _viewProfessional: function () {
+        // The home page requires the "logged in" view, so we'll set that.
+        this.setStateForNewView({
+            view: VIEWS.LOGGED_IN,
+        });
+        this._setPage(PageTypes.ProfessionalFormPage);
+        this.notifyNewScreen('professionalform');
     },
 
     _viewUser: function (userId, subAction) {
@@ -1683,6 +1695,10 @@ export default createReactClass({
         } else if (screen == 'profile') {
             dis.dispatch({
                 action: 'view_profile_page',
+            });
+        } else if (screen == 'professionalform') {
+            dis.dispatch({
+                action: 'view_professional_page',
             });
         } else if (screen == 'mycalendar') {
             dis.dispatch({

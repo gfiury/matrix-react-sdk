@@ -260,6 +260,8 @@ export default createReactClass({
             });
         }
 
+        yourMatrixAccountText = null;
+
         // If custom URLs are allowed, wire up the server details edit link.
         let editLink = null;
         if (!SdkConfig.get()['disable_custom_urls']) {
